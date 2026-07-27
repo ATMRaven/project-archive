@@ -2,6 +2,14 @@
 // Selected Work - Cloudflare API & Capacitor Mobile App Logic
 // ============================================================================
 
+// Base API URL handling (for both Web and Native Capacitor Mobile App)
+const API_BASE_URL =
+  window.location.origin.includes("localhost") ||
+  window.location.protocol === "file:" ||
+  (window.Capacitor && window.Capacitor.isNativePlatform())
+    ? "https://project-archive.atmr.workers.dev"
+    : "";
+
 // SHA-256 hash of the admin password.
 const ADMIN_PASSWORD_HASHES = [
   "37b049e345aaf2c5bba83fa43054427eac0a7a6018c6c4db722b7f6d4f6c5366", // atmr
@@ -156,7 +164,7 @@ function loadFromCache() {
 // ============================================================================
 async function loadProjects() {
   try {
-    const res = await fetch(`/api/projects?isAdmin=${isAdmin}`);
+    const res = await fetch(`${API_BASE_URL}/api/projects?isAdmin=${isAdmin}`);
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 
     const data = await res.json();
@@ -390,7 +398,7 @@ grid.addEventListener("click", (e) => {
 
 async function toggleHidden(project) {
   try {
-    const res = await fetch(`/api/projects/${project.id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/projects/${project.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ hidden: !project.hidden }),
@@ -520,7 +528,7 @@ projectForm.addEventListener("submit", async (e) => {
   try {
     let res;
     if (projectId.value) {
-      res = await fetch(`/api/projects/${projectId.value}`, {
+      res = await fetch(`${API_BASE_URL}/api/projects/${projectId.value}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -528,7 +536,7 @@ projectForm.addEventListener("submit", async (e) => {
       if (!res.ok) throw new Error("Failed to update project");
       showToast("Project updated.");
     } else {
-      res = await fetch("/api/projects", {
+      res = await fetch(`${API_BASE_URL}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -566,7 +574,7 @@ deleteOverlay.addEventListener("click", (e) => {
 $("deleteConfirm").addEventListener("click", async () => {
   if (!pendingDeleteId) return;
   try {
-    const res = await fetch(`/api/projects/${pendingDeleteId}`, { method: "DELETE" });
+    const res = await fetch(`${API_BASE_URL}/api/projects/${pendingDeleteId}`, { method: "DELETE" });
     if (!res.ok) throw new Error("Failed to delete");
 
     triggerHaptic("success");
@@ -662,7 +670,7 @@ $("categoriesSave").addEventListener("click", async () => {
   }));
 
   try {
-    const res = await fetch("/api/categories/orders", {
+    const res = await fetch(`${API_BASE_URL}/api/categories/orders`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ categoryOrders: upsertData }),

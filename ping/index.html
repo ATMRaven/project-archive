@@ -353,6 +353,13 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+  const API_BASE_URL =
+    window.location.origin.includes("localhost") ||
+    window.location.protocol === "file:" ||
+    (window.Capacitor && window.Capacitor.isNativePlatform())
+      ? "https://project-archive.atmr.workers.dev"
+      : "";
+
   const logList = document.getElementById("logList");
   const logCount = document.getElementById("logCount");
   const pingBtn = document.getElementById("pingBtn");
@@ -368,7 +375,7 @@
 
   async function fetchLogs() {
     try {
-      const res = await fetch("/api/ping-logs");
+      const res = await fetch(`${API_BASE_URL}/api/ping-logs`);
       if (!res.ok) throw new Error("Failed to query ping logs API.");
       
       const logs = await res.json();
@@ -434,7 +441,7 @@
     showToast("Triggering Cloudflare D1 keep-alive...");
     
     try {
-      const res = await fetch("/api/ping", { method: "POST" });
+      const res = await fetch(`${API_BASE_URL}/api/ping`, { method: "POST" });
       if (!res.ok) throw new Error("Ping request failed.");
       const result = await res.json();
       
