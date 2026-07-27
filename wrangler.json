@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "project-archive",
+  "main": "src/index.js",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "www",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "project-archive-db",
+      "database_id": "9f2e68d3-9254-4a1b-bdb7-b26f0581b50c"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "0 8 * * *"
+    ]
+  }
+}

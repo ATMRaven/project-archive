@@ -1,0 +1,7 @@
+node_modules/
+.netlify/
+.wrangler/
+www/
+android/app/build/
+android/build/
+android/.gradle/

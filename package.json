@@ -1,0 +1,25 @@
+{
+  "name": "project-archive",
+  "version": "1.0.0",
+  "description": "Selected Work - Project Archive Web & Mobile App",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node -e \"import fs from 'fs'; fs.rmSync('www', { recursive: true, force: true }); fs.mkdirSync('www'); ['index.html', 'style.css', 'script.js', 'manifest.json', 'sw.js'].forEach(f => fs.copyFileSync(f, 'www/' + f)); fs.cpSync('icons', 'www/icons', { recursive: true }); fs.cpSync('ping', 'www/ping', { recursive: true });\"",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "cap:sync": "npm run build && cap sync",
+    "cap:android": "npm run build && cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.111.0"
+  }
+}

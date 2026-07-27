@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ping Monitor — Project Archive</title>
+<meta name="description" content="Keep-alive ping execution logs for Supabase database.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0a0b;
+    --bg-elevated: #131316;
+    --surface: rgba(255, 255, 255, 0.045);
+    --surface-hover: rgba(255, 255, 255, 0.075);
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text-primary: #f4f2ec;
+    --text-secondary: #9a9aa2;
+    --text-tertiary: #67676f;
+    --accent: #c9a876;
+    --accent-bright: #e8cd9c;
+    --accent-glow: rgba(201, 168, 118, 0.2);
+    --emerald: #6fcf97;
+    --danger: #e5766b;
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 80px;
+  }
+
+  /* Ambient background */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .ambient__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(95px);
+    opacity: 0.35;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+  }
+  .ambient__glow--one { top: -200px; right: -150px; }
+  .ambient__glow--two { bottom: -200px; left: -150px; opacity: 0.2; }
+  .ambient__grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    padding: 56px 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  
+  .header__title-group {
+    max-width: 60%;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 12px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    min-height: 40px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 200ms var(--ease);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .btn--primary {
+    background: var(--accent);
+    color: #17140d;
+  }
+  .btn--primary:hover {
+    background: var(--accent-bright);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -6px var(--accent-glow);
+  }
+  .btn--primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn--ghost {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-secondary);
+  }
+  .btn--ghost:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  /* Log table/list */
+  .log-container {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  .log-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .log-header__title {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .log-header__count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .log-list {
+    max-height: 550px;
+    overflow-y: auto;
+  }
+
+  .log-item {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background-color 200ms var(--ease);
+  }
+  .log-item:last-child {
+    border-bottom: none;
+  }
+  .log-item:hover {
+    background-color: var(--surface);
+  }
+
+  .log-item__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .log-item__message {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    color: var(--text-primary);
+  }
+
+  .log-item__time {
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+  }
+
+  .status-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-badge--success {
+    background: rgba(111, 207, 151, 0.1);
+    color: var(--emerald);
+    border: 1px solid rgba(111, 207, 151, 0.2);
+  }
+
+  .status-badge--error {
+    background: rgba(229, 118, 107, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(229, 118, 107, 0.2);
+  }
+
+  .empty {
+    padding: 64px 24px;
+    text-align: center;
+    color: var(--text-tertiary);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 100px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 300ms var(--ease);
+  }
+  .toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 40px 0 24px;
+    }
+    .header__title-group {
+      max-width: 100%;
+    }
+    .actions {
+      width: 100%;
+    }
+    .actions .btn {
+      flex: 1;
+    }
+    .log-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+    }
+    .status-badge {
+      align-self: flex-start;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="ambient__glow ambient__glow--one"></div>
+  <div class="ambient__glow ambient__glow--two"></div>
+  <div class="ambient__grain"></div>
+</div>
+
+<div class="wrap">
+  <header class="header">
+    <div class="header__title-group">
+      <p class="eyebrow">Database Health</p>
+      <h1 class="title">Ping Logs</h1>
+      <p class="subtitle">Monitoring Supabase keep-alive cron job status</p>
+    </div>
+    <div class="actions">
+      <a href="/" class="btn btn--ghost">← Back to Archive</a>
+      <button class="btn btn--primary" id="pingBtn" type="button">Trigger Ping</button>
+    </div>
+  </header>
+
+  <main class="log-container">
+    <div class="log-header">
+      <h2 class="log-header__title">Execution History</h2>
+      <span class="log-header__count" id="logCount">Loading history...</span>
+    </div>
+    <div class="log-list" id="logList">
+      <div class="empty">Loading logs from database...</div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const logList = document.getElementById("logList");
+  const logCount = document.getElementById("logCount");
+  const pingBtn = document.getElementById("pingBtn");
+  const toast = document.getElementById("toast");
+
+  let toastTimer;
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2600);
+  }
+
+  async function fetchLogs() {
+    try {
+      const res = await fetch("/api/ping-logs");
+      if (!res.ok) throw new Error("Failed to query ping logs API.");
+      
+      const logs = await res.json();
+      renderLogs(logs);
+    } catch (err) {
+      console.error(err);
+      logList.innerHTML = `<div class="empty" style="color:var(--danger)">Error: ${err.message}</div>`;
+      logCount.textContent = "Error";
+    }
+  }
+
+  function formatTime(isoString) {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch {
+      return isoString;
+    }
+  }
+
+  function renderLogs(logs) {
+    if (!logs || logs.length === 0) {
+      logList.innerHTML = '<div class="empty">No keep-alive ping logs found. Run your first ping.</div>';
+      logCount.textContent = "0 executions";
+      return;
+    }
+
+    logCount.textContent = `${logs.length} execution${logs.length > 1 ? 's' : ''} shown`;
+    
+    logList.innerHTML = logs.map(log => {
+      const isSuccess = log.status >= 200 && log.status < 300;
+      const badgeClass = isSuccess ? 'status-badge--success' : 'status-badge--error';
+      const badgeText = isSuccess ? 'Success' : 'Failed';
+      
+      return `
+        <div class="log-item">
+          <div class="log-item__meta">
+            <span class="log-item__message">${escapeHtml(log.message || `HTTP Status ${log.status}`)}</span>
+            <span class="log-item__time">${formatTime(log.created_at)}</span>
+          </div>
+          <span class="status-badge ${badgeClass}">${badgeText} (${log.status})</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str = "") {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  pingBtn.addEventListener("click", async () => {
+    pingBtn.disabled = true;
+    pingBtn.textContent = "Pinging...";
+    showToast("Triggering Cloudflare D1 keep-alive...");
+    
+    try {
+      const res = await fetch("/api/ping", { method: "POST" });
+      if (!res.ok) throw new Error("Ping request failed.");
+      const result = await res.json();
+      
+      await fetchLogs();
+      showToast(result.message || "Keep-alive ping completed.");
+    } catch (err) {
+      console.error(err);
+      showToast("Error triggering ping execution.");
+    } finally {
+      pingBtn.disabled = false;
+      pingBtn.textContent = "Trigger Ping";
+    }
+  });
+
+  // Initial fetch
+  fetchLogs();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Selected Work</string>
+    <string name="title_activity_main">Selected Work</string>
+    <string name="package_name">com.projectarchive.app</string>
+    <string name="custom_url_scheme">com.projectarchive.app</string>
+</resources>

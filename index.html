@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive — Selected Work</title>
+<meta name="description" content="A curated archive of projects.">
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+
+<!-- Fonts: Fraunces (display serif) + Inter (body) + JetBrains Mono (utility/urls) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Ambient background layer -->
+<div class="ambient" aria-hidden="true">
+  <div class="ambient__glow ambient__glow--one"></div>
+  <div class="ambient__glow ambient__glow--two"></div>
+  <div class="ambient__grain"></div>
+</div>
+
+<!-- Admin session bar -->
+<div class="admin-bar" id="adminBar" hidden>
+  <span class="admin-bar__dot" aria-hidden="true"></span>
+  <span class="admin-bar__label">Admin session active</span>
+  <button class="admin-bar__logout" id="logoutBtn" type="button">Log out</button>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="site-header__top">
+      <div class="site-header__brand">
+        <img class="site-logo" src="/icons/icon-192.png" alt="Raven Logo" style="width: 48px; height: 48px; object-fit: contain;">
+        <p class="eyebrow">Project Archive</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5V5M12 19v2.5M4.2 4.2 6 6M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8 6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <h1 class="site-title">Selected&nbsp;Work</h1>
+    <p class="site-subtitle">A running archive of what I've built — experiments, tools, and finished things worth revisiting.</p>
+    <div class="hairline" aria-hidden="true"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div class="view-toggles" id="viewToggles">
+      <button class="view-btn is-active" data-view="grid" aria-label="Grid view" title="Grid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      </button>
+      <button class="view-btn" data-view="minimal" aria-label="Minimal view" title="Minimal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </button>
+    </div>
+    <div class="admin-toolbar" id="adminToolbar" hidden>
+      <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
+      <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" style="margin-left: 10px;">Reorder Categories</button>
+    </div>
+  </div>
+
+  <!-- Search & Category Filters -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search projects by name, description, or tag..." aria-label="Search projects">
+    </div>
+    <div class="category-chips" id="categoryChips">
+      <!-- Generated dynamically -->
+    </div>
+  </div>
+
+  <section id="grid" class="grid" data-view="grid" aria-live="polite"></section>
+
+  <p id="emptyState" class="empty-state" hidden>Nothing matches your search or selected category.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="site-footer__text"><a href="/ping" id="pingSecretTrigger" class="ping-secret-trigger" tabindex="-1">Built</a> and maintained by hand by A.T.M.R.<span id="secretTrigger" class="secret-trigger" aria-hidden="true" tabindex="-1"></span></p>
+  </div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button class="modal__close" id="loginClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Restricted</p>
+    <h2 id="loginTitle" class="modal__title">Admin Access</h2>
+    <form id="loginForm" class="form" novalidate>
+      <label class="field">
+        <span class="field__label">Password</span>
+        <input class="field__input" type="password" id="passwordInput" autocomplete="current-password" required>
+      </label>
+      <p class="field__error" id="loginError" hidden>Incorrect password. Try again.</p>
+      <div class="form__actions">
+        <button type="button" class="btn btn--ghost" id="loginCancel">Cancel</button>
+        <button type="submit" class="btn btn--primary">Enter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add / Edit Project Modal -->
+<div class="modal-overlay" id="projectOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+    <button class="modal__close" id="projectClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal" id="projectEyebrow">New Entry</p>
+    <h2 id="projectModalTitle" class="modal__title">Add Project</h2>
+    <form id="projectForm" class="form" novalidate>
+      <input type="hidden" id="projectId">
+      <label class="field">
+        <span class="field__label">Title</span>
+        <input class="field__input" type="text" id="titleInput" required maxlength="120">
+      </label>
+      <label class="field">
+        <span class="field__label">Description</span>
+        <textarea class="field__input field__input--area" id="descriptionInput" rows="3" maxlength="280"></textarea>
+      </label>
+      <label class="field">
+        <span class="field__label">URL</span>
+        <input class="field__input field__input--mono" type="url" id="urlInput" placeholder="https://" required>
+      </label>
+      <label class="field">
+        <span class="field__label">Category / Tag</span>
+        <input class="field__input" type="text" id="categoryInput" placeholder="e.g. Web App, CLI, Design" list="categorySuggestions" maxlength="40">
+        <datalist id="categorySuggestions"></datalist>
+      </label>
+      <label class="field field--row">
+        <span class="field__label">Hidden from public view</span>
+        <button type="button" class="switch" id="hiddenSwitch" role="switch" aria-checked="false">
+          <span class="switch__thumb"></span>
+        </button>
+      </label>
+      <div class="form__actions">
+        <button type="button" class="btn btn--ghost" id="projectCancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" id="projectSubmit">Save project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reorder Categories Modal -->
+<div class="modal-overlay" id="categoriesOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="categoriesTitle">
+    <button class="modal__close" id="categoriesClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Admin</p>
+    <h2 id="categoriesTitle" class="modal__title">Reorder Categories</h2>
+    <div style="margin: 20px 0;">
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px; line-height: 1.4;">Prioritize categories. Items at the top will be shown first in navigation.</p>
+      <ul id="categoriesOrderList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
+        <!-- Populated dynamically -->
+      </ul>
+    </div>
+    <div class="form__actions">
+      <button type="button" class="btn btn--ghost" id="categoriesCancel">Cancel</button>
+      <button type="button" class="btn btn--primary" id="categoriesSave">Save Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="modal-overlay" id="deleteOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <button class="modal__close" id="deleteClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Confirm</p>
+    <h2 id="deleteTitle" class="modal__title">Delete this project?</h2>
+    <p class="modal__body">This can't be undone. <strong id="deleteProjectName"></strong> will be removed from the archive.</p>
+    <div class="form__actions">
+      <button type="button" class="btn btn--ghost" id="deleteCancel">Cancel</button>
+      <button type="button" class="btn btn--danger" id="deleteConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>

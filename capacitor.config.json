@@ -1,0 +1,21 @@
+{
+  "appId": "com.projectarchive.app",
+  "appName": "Selected Work",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0a0a0b",
+      "overlaysWebView": true
+    },
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#0a0a0b",
+      "showSpinner": false
+    }
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
