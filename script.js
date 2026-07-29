@@ -30,6 +30,7 @@ let isAdmin = sessionStorage.getItem("isAdmin") === "true";
 let pendingDeleteId = null;
 let searchQuery = "";
 let selectedCategory = "all";
+let selectedSortMode = localStorage.getItem("sortMode") || "newest";
 
 // ============================================================================
 // Native Haptics Helper (Capacitor)
@@ -59,6 +60,7 @@ const adminBar = $("adminBar");
 const adminToolbar = $("adminToolbar");
 const themeToggle = $("themeToggle");
 const secretTrigger = $("secretTrigger");
+const sortSelect = $("sortSelect");
 
 const searchInput = $("searchInput");
 const categoryChips = $("categoryChips");
@@ -84,6 +86,34 @@ const deleteOverlay = $("deleteOverlay");
 const deleteProjectName = $("deleteProjectName");
 
 const toast = $("toast");
+
+// ============================================================================
+// Starred / Favorites Helpers
+// ============================================================================
+function getStarredIds() {
+  try {
+    const raw = localStorage.getItem("starred_projects");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function toggleStar(id) {
+  let starred = getStarredIds();
+  const strId = String(id);
+  if (starred.includes(strId)) {
+    starred = starred.filter((s) => s !== strId);
+    showToast("Removed from Favorites");
+  } else {
+    starred.push(strId);
+    showToast("Added to Favorites ⭐");
+    triggerHaptic("success");
+  }
+  localStorage.setItem("starred_projects", JSON.stringify(starred));
+  updateCategoryFilters();
+  render();
+}
 
 // ============================================================================
 // Theme
@@ -129,6 +159,19 @@ viewToggles.addEventListener("click", (e) => {
 });
 
 initView();
+
+// ============================================================================
+// Sort Controls
+// ============================================================================
+if (sortSelect) {
+  sortSelect.value = selectedSortMode;
+  sortSelect.addEventListener("change", (e) => {
+    triggerHaptic("light");
+    selectedSortMode = e.target.value;
+    localStorage.setItem("sortMode", selectedSortMode);
+    render();
+  });
+}
 
 // ============================================================================
 // Toast
@@ -204,6 +247,8 @@ async function loadProjects() {
 // Category Filters & Search Initialization
 // ============================================================================
 function updateCategoryFilters() {
+  const starredCount = getStarredIds().length;
+
   const categories = [...new Set(projects
     .map(p => p.category ? p.category.trim() : "")
     .filter(c => c !== "")
@@ -221,6 +266,7 @@ function updateCategoryFilters() {
 
   categoryChips.innerHTML = `
     <button class="chip ${selectedCategory === "all" ? "is-active" : ""}" data-category="all">All</button>
+    <button class="chip chip--favorite ${selectedCategory === "favorites" ? "is-active" : ""}" data-category="favorites">⭐ Favorites (${starredCount})</button>
     ${categories.map(cat => `
       <button class="chip ${selectedCategory.toLowerCase() === cat.toLowerCase() ? "is-active" : ""}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
     `).join("")}
@@ -251,7 +297,7 @@ searchInput.addEventListener("input", (e) => {
 });
 
 // ============================================================================
-// Rendering
+// Rendering & Sorting
 // ============================================================================
 function escapeHtml(str = "") {
   const div = document.createElement("div");
@@ -274,8 +320,12 @@ function render() {
   adminToolbar.hidden = !isAdmin;
   adminBar.hidden = !isAdmin;
 
-  const filtered = projects.filter(p => {
-    if (selectedCategory !== "all") {
+  const starredIds = getStarredIds();
+
+  let filtered = projects.filter(p => {
+    if (selectedCategory === "favorites") {
+      if (!starredIds.includes(String(p.id))) return false;
+    } else if (selectedCategory !== "all") {
       if (!p.category || p.category.trim().toLowerCase() !== selectedCategory.toLowerCase()) {
         return false;
       }
@@ -293,6 +343,27 @@ function render() {
     return true;
   });
 
+  // Apply user selected sorting
+  filtered.sort((a, b) => {
+    if (selectedSortMode === "newest") {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateB - dateA;
+    } else if (selectedSortMode === "oldest") {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateA - dateB;
+    } else if (selectedSortMode === "popular") {
+      const clicksA = a.clicks || 0;
+      const clicksB = b.clicks || 0;
+      if (clicksB !== clicksA) return clicksB - clicksA;
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    } else if (selectedSortMode === "alphabetical") {
+      return (a.title || "").localeCompare(b.title || "");
+    }
+    return 0;
+  });
+
   emptyState.hidden = filtered.length > 0;
 
   filtered.forEach((p, i) => {
@@ -303,6 +374,7 @@ function render() {
     const showHiddenBadge = isAdmin && p.hidden;
     const formattedUrl = ensureAbsoluteUrl(p.url);
     const thumb = thumbnailUrl(p.url);
+    const isStarred = starredIds.includes(String(p.id));
 
     card.innerHTML = `
       <div class="card__thumb">
@@ -311,21 +383,24 @@ function render() {
       <div class="card__body">
         <div class="card__head">
           <h3 class="card__title">
-            <a class="card__title-link" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(p.title)}</a>
+            <a class="card__title-link" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer" data-id="${p.id}">${escapeHtml(p.title)}</a>
           </h3>
           <div class="card__badges">
+            <button class="icon-btn icon-btn--star ${isStarred ? 'is-starred' : ''}" data-action="star" data-id="${p.id}" aria-label="Favorite ${escapeHtml(p.title)}">
+              <svg viewBox="0 0 24 24" fill="${isStarred ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </button>
             ${p.category ? `<span class="badge badge--category">${escapeHtml(p.category)}</span>` : ""}
             ${showHiddenBadge ? '<span class="badge badge--hidden">Hidden</span>' : ""}
           </div>
         </div>
         ${p.description ? `<p class="card__desc">${escapeHtml(p.description)}</p>` : ""}
         <div class="card__links">
-          <a class="card__url" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer">
+          <a class="card__url" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer" data-id="${p.id}">
             ${escapeHtml(displayUrl(p.url))}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
           </a>
           <button class="icon-btn icon-btn--copy" data-action="copy" data-url="${escapeHtml(formattedUrl)}" aria-label="Copy URL">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="1.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
         </div>
         ${isAdmin ? `
@@ -376,6 +451,12 @@ grid.addEventListener("click", (e) => {
       return;
     }
 
+    if (btn.dataset.action === "star") {
+      const id = btn.dataset.id;
+      toggleStar(id);
+      return;
+    }
+
     const id = btn.dataset.id;
     const action = btn.dataset.action;
     const project = projects.find((p) => String(p.id) === String(id));
@@ -387,7 +468,13 @@ grid.addEventListener("click", (e) => {
     return;
   }
 
-  if (link) return;
+  if (link) {
+    const id = link.dataset.id;
+    if (id) {
+      fetch(`${API_BASE_URL}/api/projects/${id}/click`, { method: "POST" }).catch(() => {});
+    }
+    return;
+  }
 
   const card = e.target.closest(".card");
   if (card && grid.getAttribute("data-view") === "minimal") {
@@ -542,7 +629,12 @@ projectForm.addEventListener("submit", async (e) => {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Failed to create project");
-      showToast("Project added.");
+      
+      // Auto-set sort to Newest so newly posted project is on top!
+      selectedSortMode = "newest";
+      if (sortSelect) sortSelect.value = "newest";
+      localStorage.setItem("sortMode", "newest");
+      showToast("Project added to top of list!");
     }
     triggerHaptic("success");
     closeProjectModal();

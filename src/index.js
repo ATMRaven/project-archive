@@ -14,16 +14,16 @@ async function getDb(c) {
 }
 
 // ----------------------------------------------------------------------------
-// API: Projects List
+// API: Projects List (Ordered by created_at DESC so newest appear first!)
 // ----------------------------------------------------------------------------
 app.get("/api/projects", async (c) => {
   try {
     const db = await getDb(c);
     const isAdmin = c.req.query("isAdmin") === "true";
 
-    let projectsQuery = "SELECT * FROM projects ORDER BY display_order ASC, created_at DESC";
+    let projectsQuery = "SELECT * FROM projects ORDER BY created_at DESC, display_order ASC";
     if (!isAdmin) {
-      projectsQuery = "SELECT * FROM projects WHERE hidden = 0 ORDER BY display_order ASC, created_at DESC";
+      projectsQuery = "SELECT * FROM projects WHERE hidden = 0 ORDER BY created_at DESC, display_order ASC";
     }
 
     const [projectsRes, categoryOrdersRes] = await Promise.all([
@@ -34,6 +34,7 @@ app.get("/api/projects", async (c) => {
     const projects = (projectsRes.results || []).map((p) => ({
       ...p,
       hidden: Boolean(p.hidden),
+      clicks: p.clicks || 0,
     }));
 
     return c.json({
@@ -47,7 +48,7 @@ app.get("/api/projects", async (c) => {
 });
 
 // ----------------------------------------------------------------------------
-// API: Create Project
+// API: Create Project (Pushes to TOP with newest timestamp & order 0)
 // ----------------------------------------------------------------------------
 app.post("/api/projects", async (c) => {
   try {
@@ -61,17 +62,35 @@ app.post("/api/projects", async (c) => {
 
     const id = crypto.randomUUID();
     const isHidden = hidden ? 1 : 0;
+    const nowIso = new Date().toISOString();
+
     const res = await db
       .prepare(
-        "INSERT INTO projects (id, title, description, url, category, hidden) VALUES (?, ?, ?, ?, ?, ?) RETURNING *"
+        "INSERT INTO projects (id, title, description, url, category, hidden, display_order, created_at) VALUES (?, ?, ?, ?, ?, ?, 0, ?) RETURNING *"
       )
-      .bind(id, title.trim(), description.trim(), url.trim(), category ? category.trim() : null, isHidden)
+      .bind(id, title.trim(), description.trim(), url.trim(), category ? category.trim() : null, isHidden, nowIso)
       .first();
 
     return c.json({ success: true, project: { ...res, hidden: Boolean(res?.hidden) } }, 201);
   } catch (err) {
     console.error("[API] Error creating project:", err);
     return c.json({ error: "Failed to create project", details: err.message }, 500);
+  }
+});
+
+// ----------------------------------------------------------------------------
+// API: Increment Project Click/Popularity Count
+// ----------------------------------------------------------------------------
+app.post("/api/projects/:id/click", async (c) => {
+  try {
+    const db = await getDb(c);
+    const id = c.req.param("id");
+
+    await db.prepare("UPDATE projects SET clicks = COALESCE(clicks, 0) + 1 WHERE id = ?").bind(id).run();
+    return c.json({ success: true });
+  } catch (err) {
+    // If clicks column doesn't exist yet in older schema, handle gracefully
+    return c.json({ success: false, message: err.message });
   }
 });
 
@@ -219,7 +238,6 @@ app.all("*", async (c) => {
   return c.text("Not Found", 404);
 });
 
-// Export default Worker handler + Scheduled event trigger
 export default {
   fetch: app.fetch,
   async scheduled(event, env, ctx) {

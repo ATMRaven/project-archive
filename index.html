@@ -57,14 +57,27 @@
 
 <main class="wrap">
   <div class="toolbar">
-    <div class="view-toggles" id="viewToggles">
-      <button class="view-btn is-active" data-view="grid" aria-label="Grid view" title="Grid">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      </button>
-      <button class="view-btn" data-view="minimal" aria-label="Minimal view" title="Minimal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-      </button>
+    <div class="toolbar__left">
+      <div class="view-toggles" id="viewToggles">
+        <button class="view-btn is-active" data-view="grid" aria-label="Grid view" title="Grid">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </button>
+        <button class="view-btn" data-view="minimal" aria-label="Minimal view" title="Minimal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        </button>
+      </div>
+
+      <div class="sort-box">
+        <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+        <select id="sortSelect" class="sort-select" aria-label="Sort projects">
+          <option value="newest" selected>✨ Newest First</option>
+          <option value="oldest">⏳ Oldest First</option>
+          <option value="popular">🔥 Most Popular</option>
+          <option value="alphabetical">🔤 Alphabetical (A-Z)</option>
+        </select>
+      </div>
     </div>
+
     <div class="admin-toolbar" id="adminToolbar" hidden>
       <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
       <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" style="margin-left: 10px;">Reorder Categories</button>
