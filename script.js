@@ -161,15 +161,58 @@ viewToggles.addEventListener("click", (e) => {
 initView();
 
 // ============================================================================
-// Sort Controls
+// Custom Glassmorphic Sort Dropdown Controls
 // ============================================================================
-if (sortSelect) {
-  sortSelect.value = selectedSortMode;
-  sortSelect.addEventListener("change", (e) => {
+const sortTrigger = $("sortSelectTrigger");
+const sortDropdown = $("sortDropdown");
+const sortLabel = $("sortSelectLabel");
+
+const SORT_LABELS = {
+  newest: "✨ Newest First",
+  oldest: "⏳ Oldest First",
+  popular: "🔥 Most Popular",
+  alphabetical: "🔤 Alphabetical (A-Z)",
+};
+
+function updateSortUI(mode) {
+  selectedSortMode = mode;
+  localStorage.setItem("sortMode", mode);
+  if (sortLabel) sortLabel.textContent = SORT_LABELS[mode] || "✨ Newest First";
+
+  if (sortDropdown) {
+    sortDropdown.querySelectorAll(".custom-select__option").forEach((opt) => {
+      opt.classList.toggle("is-selected", opt.dataset.value === mode);
+    });
+  }
+  render();
+}
+
+if (sortTrigger && sortDropdown) {
+  updateSortUI(selectedSortMode);
+
+  sortTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
     triggerHaptic("light");
-    selectedSortMode = e.target.value;
-    localStorage.setItem("sortMode", selectedSortMode);
-    render();
+    const expanded = sortTrigger.getAttribute("aria-expanded") === "true";
+    sortTrigger.setAttribute("aria-expanded", String(!expanded));
+    sortDropdown.hidden = expanded;
+  });
+
+  sortDropdown.addEventListener("click", (e) => {
+    const opt = e.target.closest(".custom-select__option");
+    if (!opt) return;
+    triggerHaptic("light");
+    const val = opt.dataset.value;
+    updateSortUI(val);
+    sortTrigger.setAttribute("aria-expanded", "false");
+    sortDropdown.hidden = true;
+  });
+
+  document.addEventListener("click", (e) => {
+    if ($("sortCustomSelect") && !sortDropdown.hidden && !$("sortCustomSelect").contains(e.target)) {
+      sortTrigger.setAttribute("aria-expanded", "false");
+      sortDropdown.hidden = true;
+    }
   });
 }
 
@@ -631,9 +674,7 @@ projectForm.addEventListener("submit", async (e) => {
       if (!res.ok) throw new Error("Failed to create project");
       
       // Auto-set sort to Newest so newly posted project is on top!
-      selectedSortMode = "newest";
-      if (sortSelect) sortSelect.value = "newest";
-      localStorage.setItem("sortMode", "newest");
+      updateSortUI("newest");
       showToast("Project added to top of list!");
     }
     triggerHaptic("success");

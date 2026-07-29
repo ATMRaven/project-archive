@@ -67,14 +67,34 @@
         </button>
       </div>
 
-      <div class="sort-box">
-        <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
-        <select id="sortSelect" class="sort-select" aria-label="Sort projects">
-          <option value="newest" selected>✨ Newest First</option>
-          <option value="oldest">⏳ Oldest First</option>
-          <option value="popular">🔥 Most Popular</option>
-          <option value="alphabetical">🔤 Alphabetical (A-Z)</option>
-        </select>
+      <div class="custom-select" id="sortCustomSelect">
+        <button class="custom-select__trigger" id="sortSelectTrigger" type="button" aria-expanded="false" aria-haspopup="listbox">
+          <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+          <span class="custom-select__label" id="sortSelectLabel">✨ Newest First</span>
+          <svg class="custom-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="custom-select__dropdown" id="sortDropdown" role="listbox" hidden>
+          <button class="custom-select__option is-selected" data-value="newest" role="option" type="button">
+            <span class="option-icon">✨</span>
+            <span class="option-label">Newest First</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="oldest" role="option" type="button">
+            <span class="option-icon">⏳</span>
+            <span class="option-label">Oldest First</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="popular" role="option" type="button">
+            <span class="option-icon">🔥</span>
+            <span class="option-label">Most Popular</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="alphabetical" role="option" type="button">
+            <span class="option-icon">🔤</span>
+            <span class="option-label">Alphabetical (A-Z)</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
