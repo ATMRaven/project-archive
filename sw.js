@@ -2,7 +2,7 @@
 // Service Worker — caches app shell for offline use
 // ============================================================================
 
-const CACHE_NAME = "archive-v2";
+const CACHE_NAME = "archive-v4";
 const SHELL_ASSETS = [
   "/",
   "/index.html",

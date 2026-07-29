@@ -846,22 +846,44 @@ document.addEventListener("keydown", (e) => {
 // 100% Free AI Admin Agent Controller & Speech Recognition
 // ============================================================================
 function openAiAgentModal() {
+  const overlay = $("aiAgentOverlay") || aiAgentOverlay;
+  const input = $("aiCommandInput") || aiCommandInput;
   if (!isAdmin) {
     showToast("Please log in as Admin first.");
     openLoginModal();
     return;
   }
   triggerHaptic("medium");
-  aiAgentOverlay.hidden = false;
-  setTimeout(() => aiCommandInput.focus(), 80);
+  if (overlay) {
+    overlay.hidden = false;
+    overlay.removeAttribute("hidden");
+  }
+  setTimeout(() => {
+    if (input) input.focus();
+  }, 80);
 }
 
 function closeAiAgentModal() {
-  if (aiAgentOverlay) aiAgentOverlay.hidden = true;
+  const overlay = $("aiAgentOverlay") || aiAgentOverlay;
+  if (overlay) {
+    overlay.hidden = true;
+    overlay.setAttribute("hidden", "");
+  }
 }
 
-if (aiAgentToggleBtn) aiAgentToggleBtn.addEventListener("click", openAiAgentModal);
-if (aiAgentClose) aiAgentClose.addEventListener("click", closeAiAgentModal);
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("#aiAgentToggleBtn");
+  if (btn) {
+    e.preventDefault();
+    openAiAgentModal();
+  }
+  const closeBtn = e.target.closest("#aiAgentClose");
+  if (closeBtn) {
+    e.preventDefault();
+    closeAiAgentModal();
+  }
+});
+
 if (aiAgentOverlay) {
   aiAgentOverlay.addEventListener("click", (e) => {
     if (e.target === aiAgentOverlay) closeAiAgentModal();
