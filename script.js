@@ -87,6 +87,15 @@ const deleteProjectName = $("deleteProjectName");
 
 const toast = $("toast");
 
+const aiAgentOverlay = $("aiAgentOverlay");
+const aiAgentToggleBtn = $("aiAgentToggleBtn");
+const aiAgentClose = $("aiAgentClose");
+const aiAgentForm = $("aiAgentForm");
+const aiCommandInput = $("aiCommandInput");
+const aiChatContainer = $("aiChatContainer");
+const aiVoiceBtn = $("aiVoiceBtn");
+const aiChips = $("aiChips");
+
 // ============================================================================
 // Starred / Favorites Helpers
 // ============================================================================
@@ -836,15 +845,6 @@ document.addEventListener("keydown", (e) => {
 // ============================================================================
 // 100% Free AI Admin Agent Controller & Speech Recognition
 // ============================================================================
-const aiAgentOverlay = $("aiAgentOverlay");
-const aiAgentToggleBtn = $("aiAgentToggleBtn");
-const aiAgentClose = $("aiAgentClose");
-const aiAgentForm = $("aiAgentForm");
-const aiCommandInput = $("aiCommandInput");
-const aiChatContainer = $("aiChatContainer");
-const aiVoiceBtn = $("aiVoiceBtn");
-const aiChips = $("aiChips");
-
 function openAiAgentModal() {
   if (!isAdmin) {
     showToast("Please log in as Admin first.");
