@@ -830,7 +830,157 @@ document.addEventListener("keydown", (e) => {
   if (!projectOverlay.hidden) closeProjectModal();
   if (!deleteOverlay.hidden) closeDeleteModal();
   if (!categoriesOverlay.hidden) closeCategoriesModal();
+  if (aiAgentOverlay && !aiAgentOverlay.hidden) closeAiAgentModal();
 });
+
+// ============================================================================
+// 100% Free AI Admin Agent Controller & Speech Recognition
+// ============================================================================
+const aiAgentOverlay = $("aiAgentOverlay");
+const aiAgentToggleBtn = $("aiAgentToggleBtn");
+const aiAgentClose = $("aiAgentClose");
+const aiAgentForm = $("aiAgentForm");
+const aiCommandInput = $("aiCommandInput");
+const aiChatContainer = $("aiChatContainer");
+const aiVoiceBtn = $("aiVoiceBtn");
+const aiChips = $("aiChips");
+
+function openAiAgentModal() {
+  if (!isAdmin) {
+    showToast("Please log in as Admin first.");
+    openLoginModal();
+    return;
+  }
+  triggerHaptic("medium");
+  aiAgentOverlay.hidden = false;
+  setTimeout(() => aiCommandInput.focus(), 80);
+}
+
+function closeAiAgentModal() {
+  if (aiAgentOverlay) aiAgentOverlay.hidden = true;
+}
+
+if (aiAgentToggleBtn) aiAgentToggleBtn.addEventListener("click", openAiAgentModal);
+if (aiAgentClose) aiAgentClose.addEventListener("click", closeAiAgentModal);
+if (aiAgentOverlay) {
+  aiAgentOverlay.addEventListener("click", (e) => {
+    if (e.target === aiAgentOverlay) closeAiAgentModal();
+  });
+}
+
+function appendAiMessage(text, isUser = false) {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `ai-msg ${isUser ? "ai-msg--user" : "ai-msg--agent"}`;
+  msgDiv.innerHTML = isUser ? escapeHtml(text) : text;
+  aiChatContainer.appendChild(msgDiv);
+  aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+}
+
+async function sendAiCommand(cmdText) {
+  if (!cmdText.trim()) return;
+
+  appendAiMessage(cmdText, true);
+  aiCommandInput.value = "";
+  triggerHaptic("light");
+
+  const loadingMsg = document.createElement("div");
+  loadingMsg.className = "ai-msg ai-msg--agent";
+  loadingMsg.textContent = "🤖 Thinking & executing command...";
+  aiChatContainer.appendChild(loadingMsg);
+  aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/ai/command`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: cmdText }),
+    });
+
+    if (loadingMsg.parentNode) aiChatContainer.removeChild(loadingMsg);
+
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+    const data = await res.json();
+    appendAiMessage(data.reply || "Done!");
+    triggerHaptic("success");
+
+    if (data.sortMode) {
+      updateSortUI(data.sortMode);
+    }
+
+    await loadProjects();
+  } catch (err) {
+    console.error(err);
+    if (loadingMsg.parentNode) aiChatContainer.removeChild(loadingMsg);
+    appendAiMessage("❌ Sorry, failed to execute command. Please try again.");
+    triggerHaptic("heavy");
+  }
+}
+
+if (aiAgentForm) {
+  aiAgentForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    sendAiCommand(aiCommandInput.value);
+  });
+}
+
+if (aiChips) {
+  aiChips.addEventListener("click", (e) => {
+    const chip = e.target.closest(".ai-chip");
+    if (!chip) return;
+    const cmd = chip.dataset.cmd;
+    sendAiCommand(cmd);
+  });
+}
+
+// ----------------------------------------------------------------------------
+// Voice Input (Web Speech Recognition API)
+// ----------------------------------------------------------------------------
+let recognition = null;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = "en-US";
+
+  recognition.onstart = () => {
+    triggerHaptic("medium");
+    if (aiVoiceBtn) aiVoiceBtn.classList.add("is-listening");
+    showToast("🎙️ Listening to voice command...");
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    aiCommandInput.value = transcript;
+    sendAiCommand(transcript);
+  };
+
+  recognition.onerror = (err) => {
+    console.warn("Speech recognition error:", err.error);
+    showToast("Voice recognition couldn't catch that. Try typing.");
+    if (aiVoiceBtn) aiVoiceBtn.classList.remove("is-listening");
+  };
+
+  recognition.onend = () => {
+    if (aiVoiceBtn) aiVoiceBtn.classList.remove("is-listening");
+  };
+}
+
+if (aiVoiceBtn) {
+  aiVoiceBtn.addEventListener("click", () => {
+    if (!recognition) {
+      showToast("Voice input is not supported in this browser. Try typing!");
+      return;
+    }
+    try {
+      recognition.start();
+    } catch {
+      recognition.stop();
+    }
+  });
+}
 
 // ============================================================================
 // Init
