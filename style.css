@@ -836,21 +836,37 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
 /* ==========================================================================
    Modals
    ========================================================================== */
+.modal-overlay[hidden] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: rgba(5, 5, 6, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  background: rgba(5, 5, 6, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   opacity: 0;
-  animation: overlay-in 280ms var(--ease) forwards;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 220ms var(--ease), visibility 220ms var(--ease);
 }
-@keyframes overlay-in { to { opacity: 1; } }
+
+.modal-overlay.is-visible,
+.modal-overlay:not([hidden]) {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  display: flex !important;
+}
 
 .modal {
   position: relative;
@@ -861,12 +877,9 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
   border-radius: var(--radius-lg);
   padding: 36px 32px 32px;
   box-shadow: var(--shadow-lift);
-  opacity: 0;
-  transform: translateY(14px) scale(0.98);
-  animation: modal-in 320ms var(--ease) forwards;
-  animation-delay: 60ms;
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
-@keyframes modal-in { to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .modal--sm { max-width: 400px; }
 
@@ -1403,5 +1416,190 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
   padding: 0 16px;
   font-size: 13.5px;
 }
+
+/* AI Confirmation Card Styles */
+.ai-confirm-card {
+  margin-top: 10px;
+  background: rgba(201, 168, 118, 0.08);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm, 10px);
+  padding: 12px 14px;
+}
+.ai-confirm-card__title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.ai-confirm-card__summary {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.ai-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn--confirm {
+  background: var(--accent);
+  color: #0b0c10;
+  border: none;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 180ms var(--ease);
+}
+.btn--confirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201, 168, 118, 0.3);
+}
+.btn--deny {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 180ms var(--ease);
+}
+.btn--deny:hover {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border-color: rgba(255, 71, 87, 0.4);
+}
+
+/* Trash Bin Modal Styles */
+.modal--md {
+  max-width: 600px;
+  width: 90%;
+}
+.trash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  margin-top: 16px;
+  padding-right: 4px;
+}
+.trash-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 10px);
+  padding: 12px 16px;
+  gap: 12px;
+  transition: border-color 200ms var(--ease);
+}
+.trash-item:hover {
+  border-color: var(--border-strong);
+}
+.trash-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+.trash-item__title {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trash-item__meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.btn--restore {
+  background: rgba(46, 213, 115, 0.12);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 180ms var(--ease);
+}
+
+/* ============================================================================
+   Mobile Optimization & Responsive Safe Areas
+   ============================================================================ */
+@media (max-width: 640px) {
+  body {
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .site-title {
+    font-size: 32px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .toolbar__left, .admin-toolbar {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .category-chips {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .category-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Modals transform into bottom-sheets on mobile */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    max-height: 85vh;
+    animation: slideUpMobile 300ms var(--ease) forwards;
+  }
+
+  @keyframes slideUpMobile {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* Ensure button touch targets are easy to tap */
+  .btn, .view-btn, .chip, .icon-btn {
+    min-height: 44px;
+  }
+}
+
+
 
 

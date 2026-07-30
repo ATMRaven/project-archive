@@ -28,6 +28,7 @@ let categoryOrders = [];
 let tempCategories = [];
 let isAdmin = sessionStorage.getItem("isAdmin") === "true";
 let pendingDeleteId = null;
+let pendingOpenAiModal = false;
 let searchQuery = "";
 let selectedCategory = "all";
 let selectedSortMode = localStorage.getItem("sortMode") || "newest";
@@ -566,11 +567,19 @@ function openLoginModal() {
   loginError.hidden = true;
   passwordInput.value = "";
   loginOverlay.hidden = false;
+  loginOverlay.removeAttribute("hidden");
+  loginOverlay.classList.add("is-visible");
+  loginOverlay.style.display = "flex";
   setTimeout(() => passwordInput.focus(), 80);
 }
+
 function closeLoginModal() {
   loginOverlay.hidden = true;
+  loginOverlay.setAttribute("hidden", "");
+  loginOverlay.classList.remove("is-visible");
+  loginOverlay.style.display = "none";
 }
+
 $("loginClose").addEventListener("click", closeLoginModal);
 $("loginCancel").addEventListener("click", closeLoginModal);
 loginOverlay.addEventListener("click", (e) => {
@@ -590,8 +599,13 @@ loginForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("isAdmin", "true");
     closeLoginModal();
     triggerHaptic("success");
-    showToast("Welcome back.");
+    showToast("Welcome back Admin.");
     await loadProjects();
+
+    if (pendingOpenAiModal) {
+      pendingOpenAiModal = false;
+      setTimeout(() => openAiAgentModal(), 150);
+    }
   } else {
     triggerHaptic("heavy");
     loginError.hidden = false;
@@ -849,7 +863,8 @@ function openAiAgentModal() {
   const overlay = $("aiAgentOverlay") || aiAgentOverlay;
   const input = $("aiCommandInput") || aiCommandInput;
   if (!isAdmin) {
-    showToast("Please log in as Admin first.");
+    pendingOpenAiModal = true;
+    showToast("Admin access required for AI Assistant.");
     openLoginModal();
     return;
   }
@@ -857,6 +872,8 @@ function openAiAgentModal() {
   if (overlay) {
     overlay.hidden = false;
     overlay.removeAttribute("hidden");
+    overlay.classList.add("is-visible");
+    overlay.style.display = "flex";
   }
   setTimeout(() => {
     if (input) input.focus();
@@ -868,6 +885,8 @@ function closeAiAgentModal() {
   if (overlay) {
     overlay.hidden = true;
     overlay.setAttribute("hidden", "");
+    overlay.classList.remove("is-visible");
+    overlay.style.display = "none";
   }
 }
 
@@ -907,7 +926,7 @@ async function sendAiCommand(cmdText) {
 
   const loadingMsg = document.createElement("div");
   loadingMsg.className = "ai-msg ai-msg--agent";
-  loadingMsg.textContent = "🤖 Thinking & executing command...";
+  loadingMsg.textContent = "🤖 Processing your request...";
   aiChatContainer.appendChild(loadingMsg);
   aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
 
@@ -924,6 +943,11 @@ async function sendAiCommand(cmdText) {
 
     const data = await res.json();
     appendAiMessage(data.reply || "Done!");
+
+    if (data.pendingConfirmation) {
+      appendAiConfirmationCard(data.pendingConfirmation);
+    }
+
     triggerHaptic("success");
 
     if (data.sortMode) {
@@ -934,10 +958,49 @@ async function sendAiCommand(cmdText) {
   } catch (err) {
     console.error(err);
     if (loadingMsg.parentNode) aiChatContainer.removeChild(loadingMsg);
-    appendAiMessage("❌ Sorry, failed to execute command. Please try again.");
+    appendAiMessage("❌ Sorry, failed to process request. Please try again.");
     triggerHaptic("heavy");
   }
 }
+
+function appendAiConfirmationCard(pending) {
+  const card = document.createElement("div");
+  card.className = "ai-confirm-card";
+  card.id = `pendingCard_${pending.pendingId}`;
+  card.innerHTML = `
+    <div class="ai-confirm-card__title">🛡️ Proposed Database Changes</div>
+    <div class="ai-confirm-card__summary">${escapeHtml(pending.summary)}</div>
+    <div class="ai-confirm-actions">
+      <button class="btn--confirm" onclick="window.confirmAiAction('${pending.pendingId}', true)">✅ Confirm & Execute</button>
+      <button class="btn--deny" onclick="window.confirmAiAction('${pending.pendingId}', false)">❌ Cancel</button>
+    </div>
+  `;
+  aiChatContainer.appendChild(card);
+  aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+}
+
+window.confirmAiAction = async function (pendingId, isApproved) {
+  const card = document.getElementById(`pendingCard_${pendingId}`);
+  if (card) {
+    card.innerHTML = `<div class="ai-confirm-card__summary">${isApproved ? '⏳ Executing changes...' : '❌ Cancelled.'}</div>`;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/ai/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pendingId, confirm: isApproved }),
+    });
+
+    const data = await res.json();
+    appendAiMessage(data.reply || (isApproved ? "✅ Actions executed!" : "❌ Cancelled."));
+    triggerHaptic(isApproved ? "success" : "light");
+    await loadProjects();
+  } catch (err) {
+    console.error(err);
+    appendAiMessage("❌ Failed to process confirmation.");
+  }
+};
 
 if (aiAgentForm) {
   aiAgentForm.addEventListener("submit", (e) => {
@@ -1003,6 +1066,94 @@ if (aiVoiceBtn) {
     }
   });
 }
+
+// ----------------------------------------------------------------------------
+// Recently Deleted Trash Bin Modal Logic
+// ----------------------------------------------------------------------------
+const trashBtn = document.getElementById("trashBtn");
+const trashOverlay = document.getElementById("trashOverlay");
+const trashClose = document.getElementById("trashClose");
+const trashListContainer = document.getElementById("trashListContainer");
+
+function openTrashModal() {
+  if (!isAdmin) {
+    showToast("Admin access required for Trash Bin.");
+    openLoginModal();
+    return;
+  }
+  if (trashOverlay) {
+    trashOverlay.hidden = false;
+    trashOverlay.classList.add("is-visible");
+    loadDeletedProjects();
+  }
+}
+
+function closeTrashModal() {
+  if (trashOverlay) {
+    trashOverlay.classList.remove("is-visible");
+    trashOverlay.hidden = true;
+  }
+}
+
+if (trashBtn) {
+  trashBtn.addEventListener("click", openTrashModal);
+}
+if (trashClose) {
+  trashClose.addEventListener("click", closeTrashModal);
+}
+if (trashOverlay) {
+  trashOverlay.addEventListener("click", (e) => {
+    if (e.target === trashOverlay) closeTrashModal();
+  });
+}
+
+async function loadDeletedProjects() {
+  if (!trashListContainer) return;
+  trashListContainer.innerHTML = `<p class="modal__body">Loading deleted projects...</p>`;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/projects/deleted?isAdmin=${isAdmin}`);
+    const data = await res.json();
+    const list = data.deletedProjects || [];
+
+    if (list.length === 0) {
+      trashListContainer.innerHTML = `<p class="modal__body" style="text-align: center; color: var(--text-tertiary);">✨ Trash bin is empty! No deleted projects.</p>`;
+      return;
+    }
+
+    trashListContainer.innerHTML = list
+      .map(
+        (p) => `
+      <div class="trash-item">
+        <div class="trash-item__info">
+          <div class="trash-item__title">${escapeHtml(p.title)}</div>
+          <div class="trash-item__meta">Category: ${escapeHtml(p.category || "General")} • Deleted ${p.deleted_at ? new Date(p.deleted_at).toLocaleDateString() : "recently"}</div>
+        </div>
+        <button class="btn--restore" onclick="window.restoreProject('${p.id}')">♻️ Restore</button>
+      </div>
+    `
+      )
+      .join("");
+  } catch (err) {
+    console.error(err);
+    trashListContainer.innerHTML = `<p class="modal__body" style="color: #ff4757;">Failed to load trash bin.</p>`;
+  }
+}
+
+window.restoreProject = async function (id) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/projects/${id}/restore`, { method: "POST" });
+    if (res.ok) {
+      showToast("♻️ Project restored!");
+      triggerHaptic("success");
+      await loadDeletedProjects();
+      await loadProjects();
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to restore project.");
+  }
+};
 
 // ============================================================================
 // Init

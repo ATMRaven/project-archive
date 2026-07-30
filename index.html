@@ -96,12 +96,12 @@
           </button>
         </div>
       </div>
-    </div>
 
     <div class="admin-toolbar" id="adminToolbar" hidden>
-      <button class="btn btn--ai" id="aiAgentToggleBtn" type="button">🤖 AI Assistant</button>
-      <button class="btn btn--primary" id="addProjectBtn" type="button" style="margin-left: 8px;">+ Add project</button>
+      <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
       <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" style="margin-left: 8px;">Reorder Categories</button>
+      <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" style="margin-left: 8px;">🤖 AI Assistant</button>
+      <button class="btn btn--ghost" id="trashBtn" type="button" style="margin-left: 8px;">🗑️ Trash Bin</button>
     </div>
   </div>
 
@@ -217,6 +217,8 @@
       <button type="button" class="btn btn--danger" id="deleteConfirm">Delete</button>
     </div>
   </div>
+</div>
+
 <!-- 100% Free AI Admin Assistant Modal Drawer -->
 <div class="modal-overlay" id="aiAgentOverlay" hidden>
   <div class="modal modal--ai" role="dialog" aria-modal="true" aria-labelledby="aiAgentTitle">
@@ -259,6 +261,20 @@
       <input class="ai-input" type="text" id="aiCommandInput" placeholder="Speak or type an admin command..." required autocomplete="off">
       <button type="submit" class="btn btn--primary ai-send-btn" id="aiSendBtn">Send</button>
     </form>
+  </div>
+</div>
+
+<!-- Recently Deleted Trash Bin Modal -->
+<div class="modal-overlay" id="trashOverlay" hidden>
+  <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="trashTitle">
+    <button class="modal__close" id="trashClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Recovery Bin</p>
+    <h2 id="trashTitle" class="modal__title">🗑️ Recently Deleted Projects</h2>
+    <p class="modal__body">Revive soft-deleted items back into your active archive list at any time.</p>
+    
+    <div class="trash-list" id="trashListContainer">
+      <!-- Dynamically populated trash items -->
+    </div>
   </div>
 </div>
 
