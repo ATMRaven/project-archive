@@ -1533,11 +1533,21 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
 }
 
 /* ============================================================================
-   Mobile Optimization & Responsive Safe Areas
+   ULTRA-PREMIUM MOBILE ARCHITECTURE & APP EXPERIENCE
    ============================================================================ */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  /* Prevent iOS/Android Safari Auto-Zoom */
+  input[type="text"],
+  input[type="password"],
+  input[type="url"],
+  input[type="email"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
   body {
-    padding-top: max(16px, env(safe-area-inset-top));
+    padding-top: max(8px, env(safe-area-inset-top));
     padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
@@ -1546,36 +1556,186 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
     padding-right: 16px;
   }
 
+  /* Compact Mobile Header */
+  .site-header {
+    padding: 24px 0 16px;
+  }
+  .site-header__top {
+    margin-bottom: 14px;
+  }
+  .site-logo {
+    width: 38px !important;
+    height: 38px !important;
+  }
   .site-title {
-    font-size: 32px;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+  }
+  .site-subtitle {
+    font-size: 13.5px;
+    line-height: 1.45;
+    margin-top: 4px;
+    color: var(--text-secondary);
   }
 
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+  /* Mobile Sticky Glassmorphic Filter & Search Bar */
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--bg);
+    padding: 10px 0 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
-  .toolbar__left, .admin-toolbar {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  .search-box {
+    margin-bottom: 10px;
+  }
+  .search-box input {
+    height: 44px;
+    border-radius: 12px;
+    font-size: 16px !important;
+    padding-left: 42px;
+    background: var(--bg-elevated);
   }
 
+  /* Category Chips - Fluid Touch Carousel */
   .category-chips {
+    display: flex;
+    gap: 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+    padding: 2px 2px 6px 2px;
     scrollbar-width: none;
   }
   .category-chips::-webkit-scrollbar {
     display: none;
   }
+  .chip {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13.5px;
+    border-radius: 20px;
+    white-space: nowrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: all 200ms var(--ease);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chip:active {
+    transform: scale(0.95);
+  }
+  .chip.is-active {
+    background: var(--accent-wash);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 2px 10px var(--accent-glow);
+  }
 
-  /* Modals transform into bottom-sheets on mobile */
+  /* Mobile Toolbar Controls */
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .toolbar__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Admin Toolbar on Mobile */
+  .admin-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 4px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .admin-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .admin-toolbar .btn {
+    flex-shrink: 0;
+    height: 40px;
+    font-size: 13px;
+    padding: 0 14px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  /* Grid Layout: Single Fluid Column on Mobile */
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Card Component Mobile Polish */
+  .card {
+    border-radius: 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .card:active {
+    transform: scale(0.985);
+    transition: transform 120ms var(--ease);
+  }
+  .card__thumb {
+    aspect-ratio: 16 / 9;
+    border-bottom: 1px solid var(--border);
+  }
+  .card__body {
+    padding: 16px 16px 18px;
+  }
+  .card__title {
+    font-size: 17px;
+    line-height: 1.35;
+    font-weight: 600;
+  }
+  .card__desc {
+    font-size: 13.5px;
+    line-height: 1.45;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__links {
+    gap: 8px;
+  }
+  .btn--visit {
+    height: 40px;
+    font-size: 13.5px;
+    padding: 0 16px;
+    border-radius: 10px;
+  }
+
+  /* Native iOS/Android Bottom-Sheet Modals */
   .modal-overlay {
     align-items: flex-end;
     padding: 0;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(0, 0, 0, 0.65);
   }
 
   .modal {
@@ -1583,22 +1743,54 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
     max-width: 100% !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    border-top-left-radius: 20px !important;
-    border-top-right-radius: 20px !important;
-    max-height: 85vh;
-    animation: slideUpMobile 300ms var(--ease) forwards;
+    border-top-left-radius: 24px !important;
+    border-top-right-radius: 24px !important;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 24px 20px 32px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+    border-top: 1px solid var(--border-strong);
+    animation: sheetSlideUp 320ms var(--ease) forwards;
   }
 
-  @keyframes slideUpMobile {
+  /* Drag handle at top of bottom sheets */
+  .modal::before {
+    content: "";
+    display: block;
+    width: 38px;
+    height: 4.5px;
+    background: var(--border-strong);
+    border-radius: 3px;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes sheetSlideUp {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
   }
 
-  /* Ensure button touch targets are easy to tap */
-  .btn, .view-btn, .chip, .icon-btn {
-    min-height: 44px;
+  /* AI Assistant Chat Drawer Mobile Fitting */
+  .modal--ai {
+    height: 88vh !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .ai-chat {
+    flex: 1;
+    max-height: none !important;
+  }
+  .ai-msg {
+    max-width: 90%;
+    font-size: 14px;
+  }
+  .ai-input-bar {
+    margin-top: 10px;
+  }
+  .ai-input {
+    font-size: 16px !important;
   }
 }
+
 
 
 
