@@ -541,17 +541,34 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
   overflow: hidden;
   opacity: 0;
   transform: translateY(16px);
-  animation: card-in 620ms var(--ease) forwards;
+  animation: card-in 240ms var(--ease) forwards;
   transition: transform 320ms var(--ease), box-shadow 320ms var(--ease), border-color 320ms var(--ease), background 320ms var(--ease);
 }
 
 /* Thumbnail */
 .card__thumb {
   width: 100%;
-  aspect-ratio: 3 / 2;
-  background: var(--bg-elevated);
+  aspect-ratio: 16 / 9;
+  height: 200px;
+  max-height: 220px;
+  background: radial-gradient(circle at 50% 50%, #1e1e24 0%, #111115 100%);
   overflow: hidden;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.card__thumb-fallback {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0.28;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
 }
 .card__thumb::before {
   content: "";
@@ -559,6 +576,8 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
   inset: 0;
   background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
   animation: shimmer 1.8s ease infinite;
+  z-index: 2;
+  pointer-events: none;
 }
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
@@ -567,10 +586,18 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
 .card__thumb-img {
   width: 100%;
   height: 100%;
+  max-height: 220px;
   object-fit: cover;
+  object-position: top center;
   display: block;
   transition: transform 500ms var(--ease), opacity 400ms var(--ease);
   opacity: 0;
+  position: relative;
+  z-index: 3;
+}
+:root[data-theme="dark"] .card__thumb-img,
+:root:not([data-theme="light"]) .card__thumb-img {
+  filter: brightness(0.85) contrast(1.05);
 }
 .card__thumb-img.loaded {
   opacity: 1;
@@ -1558,24 +1585,31 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
 
   /* Compact Mobile Header */
   .site-header {
-    padding: 24px 0 16px;
+    padding: 12px 0 8px !important;
   }
   .site-header__top {
-    margin-bottom: 14px;
+    margin-bottom: 8px !important;
+  }
+  .site-header__hero {
+    margin-bottom: 8px !important;
   }
   .site-logo {
-    width: 38px !important;
-    height: 38px !important;
+    width: 32px !important;
+    height: 32px !important;
   }
   .site-title {
-    font-size: 28px;
+    font-size: 24px !important;
     letter-spacing: -0.02em;
   }
   .site-subtitle {
-    font-size: 13.5px;
-    line-height: 1.45;
-    margin-top: 4px;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    margin-top: 2px !important;
     color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   /* Mobile Sticky Glassmorphic Filter & Search Bar */
@@ -1679,54 +1713,112 @@ main.wrap { position: relative; z-index: 1; padding-bottom: 100px; }
     white-space: nowrap;
   }
 
-  /* Grid Layout: Single Fluid Column on Mobile */
+  /* Single Column Compact Row Layout on Mobile */
   .grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
   }
 
-  /* Card Component Mobile Polish */
   .card {
-    border-radius: 16px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 12px 14px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
   }
   .card:active {
     transform: scale(0.985);
-    transition: transform 120ms var(--ease);
   }
+
+  /* Left-side 60px squircle thumbnail icon */
   .card__thumb {
-    aspect-ratio: 16 / 9;
-    border-bottom: 1px solid var(--border);
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    max-height: 60px !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--border) !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
   }
+  .card__thumb-fallback {
+    font-size: 24px !important;
+  }
+
+  /* Right-side card body content */
   .card__body {
-    padding: 16px 16px 18px;
+    padding: 0 !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .card__head {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    margin: 0 !important;
   }
   .card__title {
-    font-size: 17px;
-    line-height: 1.35;
-    font-weight: 600;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.25 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
-  .card__desc {
-    font-size: 13.5px;
-    line-height: 1.45;
-    margin-top: 6px;
-    margin-bottom: 12px;
-    color: var(--text-secondary);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .card__title-link {
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
+
+  .card__badges {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .badge--category {
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 6px;
+  }
+
+  .card__desc {
+    font-size: 12.5px !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+    color: var(--text-secondary) !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
   .card__links {
-    gap: 8px;
+    margin-top: 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
   }
-  .btn--visit {
-    height: 40px;
-    font-size: 13.5px;
-    padding: 0 16px;
-    border-radius: 10px;
+  .card__url {
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 180px !important;
   }
 
   /* Native iOS/Android Bottom-Sheet Modals */

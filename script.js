@@ -365,6 +365,11 @@ function ensureAbsoluteUrl(url) {
 }
 
 function thumbnailUrl(url) {
+  if (!url) return "";
+  const lower = url.toLowerCase();
+  if (lower.endsWith(".apk") || lower.endsWith(".zip") || lower.endsWith(".exe") || lower.includes("releases/download")) {
+    return "";
+  }
   return `https://s0.wp.com/mshots/v1/${encodeURIComponent(ensureAbsoluteUrl(url))}?w=600&h=400`;
 }
 
@@ -422,16 +427,18 @@ function render() {
   filtered.forEach((p, i) => {
     const card = document.createElement("article");
     card.className = "card";
-    card.style.animationDelay = `${Math.min(i * 60, 480)}ms`;
+    card.style.animationDelay = `${Math.min(i * 20, 120)}ms`;
 
     const showHiddenBadge = isAdmin && p.hidden;
     const formattedUrl = ensureAbsoluteUrl(p.url);
     const thumb = thumbnailUrl(p.url);
     const isStarred = starredIds.includes(String(p.id));
 
+    const firstChar = escapeHtml((p.title || "P").charAt(0).toUpperCase());
     card.innerHTML = `
       <div class="card__thumb">
-        <img class="card__thumb-img" src="${thumb}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
+        <div class="card__thumb-fallback" aria-hidden="true">${firstChar}</div>
+        ${thumb ? `<img class="card__thumb-img" src="${thumb}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` : ""}
       </div>
       <div class="card__body">
         <div class="card__head">
