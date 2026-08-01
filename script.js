@@ -536,11 +536,6 @@ grid.addEventListener("click", (e) => {
     return;
   }
 
-  const card = e.target.closest(".card");
-  if (card && grid.getAttribute("data-view") === "minimal") {
-    triggerHaptic("light");
-    card.classList.toggle("is-expanded");
-  }
 });
 
 async function toggleHidden(project) {

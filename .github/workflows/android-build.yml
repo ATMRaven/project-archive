@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Web App & Sync Capacitor
         run: npm run cap:sync
@@ -40,21 +43,25 @@ jobs:
           cd android
           ./gradlew assembleDebug --no-daemon
 
+      - name: Name release APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk project-archive.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ProjectArchive-debug.apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: project-archive.apk
 
       - name: Create GitHub Release & Upload APK
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
           tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
+          name: Project Archive Android v1.0.${{ github.run_number }}
           body: |
-            Automated Android Mobile App Build for Project Archive.
-            Download `ProjectArchive.apk` below!
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+            Installable Android APK for Project Archive.
+
+            Download `project-archive.apk` below, then open it on an Android device.
+          files: project-archive.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

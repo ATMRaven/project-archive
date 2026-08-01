@@ -89,7 +89,9 @@ html { scroll-behavior: smooth; }
 [hidden] { display: none !important; }
 
 html, body {
-  overflow-x: hidden;
+  /* clip avoids horizontal page overflow without creating a second scroll
+     container, which can trap vertical scrolling on mobile Safari. */
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -111,7 +113,8 @@ body {
 .wrap {
   min-width: 0;
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box;
   max-width: 1040px;
   margin: 0 auto;
@@ -278,7 +281,8 @@ a { color: inherit; }
 main.wrap {
   min-width: 0;
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box; position: relative; z-index: 1; padding-bottom: 100px; }
 
 .admin-toolbar {
@@ -483,6 +487,42 @@ main.wrap {
 .grid[data-view="minimal"] {
   grid-template-columns: 1fr;
   gap: 2px;
+}
+
+/* Minimal view is intentionally a compact, link-only list. */
+.grid[data-view="minimal"] .card {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  cursor: default;
+  overflow: visible;
+}
+.grid[data-view="minimal"] .card:hover {
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+.grid[data-view="minimal"] .card::before,
+.grid[data-view="minimal"] .card::after,
+.grid[data-view="minimal"] .card__thumb,
+.grid[data-view="minimal"] .card__head,
+.grid[data-view="minimal"] .card__desc,
+.grid[data-view="minimal"] .card .icon-btn--copy,
+.grid[data-view="minimal"] .card__admin-controls {
+  display: none;
+}
+.grid[data-view="minimal"] .card__body {
+  padding: 12px 0;
+}
+.grid[data-view="minimal"] .card__links {
+  display: block;
+}
+.grid[data-view="minimal"] .card__url {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .card {
   /* A grid item must be allowed to shrink below the intrinsic width of its
@@ -1134,13 +1174,14 @@ main.wrap {
   body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: auto;
   }
 
   .wrap {
   min-width: 0;
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box; padding: 0 20px; }
   .site-header { padding: max(40px, env(safe-area-inset-top)) 0 32px; }
   .grid { grid-template-columns: minmax(0, 1fr) !important; }
@@ -1577,7 +1618,8 @@ main.wrap {
   .wrap {
   min-width: 0;
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
@@ -1835,6 +1877,45 @@ main.wrap {
   }
   .card__admin-controls {
     display: flex !important;
+  }
+
+  /* These rules come after the mobile card layout so minimal remains a
+     link-only list at phone widths. */
+  .grid[data-view="minimal"] {
+    gap: 0 !important;
+  }
+  .grid[data-view="minimal"] .card {
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+  .grid[data-view="minimal"] .card__thumb,
+  .grid[data-view="minimal"] .card__head,
+  .grid[data-view="minimal"] .card__desc,
+  .grid[data-view="minimal"] .card .icon-btn--copy,
+  .grid[data-view="minimal"] .card__admin-controls {
+    display: none !important;
+  }
+  .grid[data-view="minimal"] .card__body {
+    display: block !important;
+    padding: 12px 0 !important;
+    overflow: visible !important;
+  }
+  .grid[data-view="minimal"] .card__links {
+    display: block !important;
+    overflow: visible !important;
+  }
+  .grid[data-view="minimal"] .card__url {
+    display: inline-flex !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
   }
 
   /* Native iOS/Android Bottom-Sheet Modals */
