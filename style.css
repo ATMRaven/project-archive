@@ -1986,3 +1986,22 @@ main.wrap {
     font-size: 16px !important;
   }
 }
+
+/* Abandoned Project Alert Modal Override */
+#abandonedOverlay {
+  display: flex !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  background: rgba(3, 7, 18, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
