@@ -1176,6 +1176,14 @@ window.restoreProject = async function (id) {
 // ============================================================================
 loadProjects();
 
+// Automatically show Abandoned Project Warning Pop-up Modal
+const abandonedOverlay = document.getElementById("abandonedOverlay");
+if (abandonedOverlay) {
+  abandonedOverlay.hidden = false;
+  abandonedOverlay.classList.add("is-visible");
+  abandonedOverlay.style.display = "flex";
+}
+
 // Register service worker for PWA / offline support
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js").catch(() => {});
