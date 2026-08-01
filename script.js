@@ -1176,13 +1176,63 @@ window.restoreProject = async function (id) {
 // ============================================================================
 loadProjects();
 
-// Automatically show Abandoned Project Warning Pop-up Modal
-const abandonedOverlay = document.getElementById("abandonedOverlay");
-if (abandonedOverlay) {
-  abandonedOverlay.hidden = false;
-  abandonedOverlay.classList.add("is-visible");
-  abandonedOverlay.style.display = "flex";
-}
+// Automatically inject and show Abandoned Project Warning Pop-up Modal
+(function showAbandonedModal() {
+  if (document.getElementById("abandonedOverlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "abandonedOverlay";
+  overlay.className = "modal-overlay modal-overlay--active";
+  overlay.style.cssText = `
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background: rgba(3, 7, 18, 0.94) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+  `;
+
+  overlay.innerHTML = `
+    <div style="max-width: 520px; width: 100%; border: 1px solid rgba(239, 68, 68, 0.4); text-align: center; background: rgba(15, 23, 42, 0.96); box-shadow: 0 0 60px rgba(239, 68, 68, 0.3); padding: 32px; border-radius: 16px; font-family: system-ui, -apple-system, sans-serif;">
+      <div style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 999px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
+        ⚠️ Notice: Legacy Project Abandoned
+      </div>
+      <h2 style="font-size: 1.45rem; color: #fff; margin-bottom: 10px; font-weight: 700; line-height: 1.3;">
+        This Archive Link Has Been Permanently Abandoned!
+      </h2>
+      <p style="font-size: 0.9rem; color: #94a3b8; line-height: 1.6; margin-bottom: 24px;">
+        This original Netlify & Supabase project archive is <strong>permanently retired and abandoned</strong>. No new projects, links, or updates will ever be added to this site.
+        <br/><br/>
+        Please switch to our brand-new, lightning-fast <strong>Cloudflare Edition</strong> or download the official Android App!
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+        <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" style="padding: 14px 20px; font-size: 0.98rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); color: #fff; border-radius: 10px; box-shadow: 0 0 24px rgba(124, 58, 237, 0.4); border: none; cursor: pointer;">
+          🚀 Open New Cloudflare Archive
+        </a>
+
+        <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" style="padding: 12px 20px; font-size: 0.92rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.08); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px;">
+          📱 Download Android App (.APK)
+        </a>
+
+        <button type="button" onclick="document.getElementById('abandonedOverlay').remove();" style="background: none; border: none; color: #64748b; font-size: 0.82rem; margin-top: 6px; cursor: pointer; text-decoration: underline;">
+          Continue to legacy read-only site ✕
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+})();
 
 // Register service worker for PWA / offline support
 if ("serviceWorker" in navigator) {
