@@ -392,9 +392,11 @@ main.wrap {
 .custom-select__dropdown {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
+  left: auto;
   z-index: 100;
   min-width: 210px;
+  max-width: calc(100vw - 32px);
   background: var(--surface-elevated, #141416);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -489,40 +491,89 @@ main.wrap {
   gap: 2px;
 }
 
-/* Minimal view is intentionally a compact, link-only list. */
+/* ---------- Minimal view (Desktop & Mobile) ---------- */
+.grid[data-view="minimal"] {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
 .grid[data-view="minimal"] .card {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 14px);
   box-shadow: none;
-  cursor: default;
-  overflow: visible;
+  transition: all 200ms var(--ease);
+  overflow: hidden;
 }
+
 .grid[data-view="minimal"] .card:hover {
-  background: transparent;
-  box-shadow: none;
-  transform: none;
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
 }
+
 .grid[data-view="minimal"] .card::before,
 .grid[data-view="minimal"] .card::after,
 .grid[data-view="minimal"] .card__thumb,
-.grid[data-view="minimal"] .card__head,
-.grid[data-view="minimal"] .card__desc,
-.grid[data-view="minimal"] .card .icon-btn--copy,
-.grid[data-view="minimal"] .card__admin-controls {
-  display: none;
+.grid[data-view="minimal"] .card__desc {
+  display: none !important;
 }
+
 .grid[data-view="minimal"] .card__body {
-  padding: 12px 0;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
+
+.grid[data-view="minimal"] .card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.grid[data-view="minimal"] .card__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
 .grid[data-view="minimal"] .card__links {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 300px;
+  min-width: 0;
+  justify-content: flex-end;
 }
+
 .grid[data-view="minimal"] .card__url {
-  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   max-width: 100%;
-  overflow-wrap: anywhere;
+}
+
+.grid[data-view="minimal"] .card .icon-btn--copy {
+  display: inline-flex !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 .card {
   /* A grid item must be allowed to shrink below the intrinsic width of its
@@ -1075,6 +1126,8 @@ main.wrap {
   padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
 }
 .category-chips::-webkit-scrollbar {
   display: none;
@@ -1167,142 +1220,7 @@ main.wrap {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ==========================================================================
-   Responsive & Native Mobile Enhancements
-   ========================================================================== */
-@media (max-width: 640px) {
-  body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    overscroll-behavior-y: auto;
-  }
 
-  .wrap {
-  min-width: 0;
-  width: 100%;
-  overflow-x: clip;
-  overflow-y: visible;
-  box-sizing: border-box; padding: 0 20px; }
-  .site-header { padding: max(40px, env(safe-area-inset-top)) 0 32px; }
-  .grid { grid-template-columns: minmax(0, 1fr) !important; }
-
-  /* Touch active micro-animations */
-  .btn:active, .chip:active, .icon-btn:active, .card:active {
-    transform: scale(0.97) !important;
-    transition: transform 100ms var(--ease) !important;
-  }
-
-  /* Minimal view mobile overrides */
-  .grid[data-view="minimal"] {
-    gap: 0;
-  }
-  .grid[data-view="minimal"] .card {
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: break-word;
-    padding: 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .grid[data-view="minimal"] .card__body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto !important;
-    grid-template-rows: auto auto;
-    row-gap: 4px;
-    column-gap: 16px;
-    align-items: center;
-    padding: 16px 8px;
-  }
-  .grid[data-view="minimal"] .card__head {
-    grid-column: 1;
-    grid-row: 1;
-    margin-bottom: 0;
-  }
-  .grid[data-view="minimal"] .card__links {
-    display: contents;
-  }
-  .grid[data-view="minimal"] .card__url {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 13px;
-    margin-top: 2px;
-    word-break: break-all !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    max-width: 100% !important;
-  }
-  .grid[data-view="minimal"] .card .icon-btn--copy {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-  }
-  .grid[data-view="minimal"] .card__admin-controls {
-    grid-column: 1 / span 2;
-    grid-row: 3;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-  }
-  .grid[data-view="minimal"] .card__admin-controls .icon-btn {
-    width: 40px;
-    height: 40px;
-  }
-  .grid[data-view="minimal"] .card.is-expanded .card__thumb {
-    margin-top: 4px;
-    margin-bottom: 16px;
-    max-height: 240px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-    margin-right: 8px;
-  }
-
-  /* Native Mobile Bottom Sheet Modal */
-  .modal-overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
-  .modal {
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    max-height: 90vh;
-    padding-bottom: max(32px, env(safe-area-inset-bottom));
-    overflow-y: auto;
-    animation: modal-in-mobile 340ms var(--ease) forwards;
-  }
-  .modal::before {
-    content: "";
-    display: block;
-    width: 36px;
-    height: 4px;
-    background: var(--border-strong);
-    border-radius: 100px;
-    margin: -16px auto 20px;
-  }
-  @keyframes modal-in-mobile { from { transform: translateY(100%); opacity: 1; } to { transform: translateY(0); opacity: 1; } }
-
-  .admin-toolbar { justify-content: stretch; }
-  .admin-toolbar .btn { width: 100%; }
-
-  .icon-btn--copy {
-    width: 44px;
-    height: 44px;
-  }
-  .icon-btn--copy svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .toast {
-    bottom: max(28px, env(safe-area-inset-bottom));
-    width: calc(100% - 40px);
-    text-align: center;
-  }
-}
 
 /* ==========================================================================
    100% Free AI Admin Agent Styling
@@ -1659,51 +1577,63 @@ main.wrap {
     position: sticky;
     top: 0;
     z-index: 30;
-    background: rgba(5, 5, 7, 0.85); /* Slightly transparent for glass effect */
-    padding: 16px 0 12px;
+    background: rgba(5, 5, 7, 0.85);
+    padding: 14px 20px 12px;
     margin-bottom: 24px;
     margin-left: -20px;
     margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px;
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-  }
-
-  :root[data-theme="light"] .filter-bar,
-  :root:not([data-theme="dark"]) .filter-bar {
-    background: rgba(250, 249, 246, 0.85);
+    width: calc(100% + 40px);
+    box-sizing: border-box;
   }
 
   .search-box {
+    width: 100%;
     margin-bottom: 12px;
+    box-sizing: border-box;
   }
+
   .search-box input {
-    height: 48px;
-    border-radius: 14px;
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 14px !important;
     font-size: 16px !important;
-    padding-left: 44px;
-    background: var(--bg-elevated);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 12px 16px 12px 44px !important;
+    background: var(--bg-elevated) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    box-sizing: border-box !important;
   }
+
+  :root[data-theme="light"] .filter-bar {
+    background: rgba(250, 249, 246, 0.85);
+  }
+
+
 
   /* Category Chips - Fluid Touch Carousel */
   .category-chips {
     display: flex;
     gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    padding: 2px 2px 8px 2px;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity;
+    touch-action: pan-x !important;
+    padding: 4px 20px 8px 0;
+    margin-right: -20px;
     scrollbar-width: none;
+    width: calc(100% + 20px);
   }
   .category-chips::-webkit-scrollbar {
-    display: none;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   .chip {
     scroll-snap-align: start;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
     height: 40px;
     padding: 0 18px;
     font-size: 14px;
@@ -1715,6 +1645,9 @@ main.wrap {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    touch-action: pan-x !important;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .chip:active {
     transform: scale(0.95);
@@ -1729,29 +1662,68 @@ main.wrap {
 
   /* Mobile Toolbar Controls */
   .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    margin-bottom: 20px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+    width: 100% !important;
   }
   .toolbar__left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    justify-content: space-between;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    justify-content: space-between !important;
   }
 
   /* Admin Toolbar on Mobile */
   .admin-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    overflow-x: auto;
-    padding: 4px 0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    display: flex !important;
+    flex: 1 1 100% !important;
+    flex-basis: 100% !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin: 12px 0 0 0 !important;
+    padding: 4px 4px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    scrollbar-width: none !important;
+    box-sizing: border-box !important;
+  }
+  .admin-toolbar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .admin-toolbar .btn {
+    flex-shrink: 0 !important;
+    height: 44px !important;
+    font-size: 13.5px !important;
+    padding: 0 16px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    touch-action: pan-x !important;
+  }
+
+  .card__admin-controls {
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+    padding-top: 14px !important;
+    border-top: 1px solid var(--border-strong) !important;
+  }
+  .card__admin-controls .icon-btn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-strong) !important;
+    color: var(--text-primary) !important;
   }
   .admin-toolbar::-webkit-scrollbar {
     display: none;
@@ -1879,44 +1851,78 @@ main.wrap {
     display: flex !important;
   }
 
-  /* These rules come after the mobile card layout so minimal remains a
-     link-only list at phone widths. */
+  /* Minimal view mobile overrides */
   .grid[data-view="minimal"] {
     gap: 0 !important;
   }
   .grid[data-view="minimal"] .card {
-    background: transparent !important;
-    border: 0 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+    padding: 0 !important;
     border-bottom: 1px solid var(--border) !important;
+    background: transparent !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     overflow: visible !important;
   }
-  .grid[data-view="minimal"] .card__thumb,
-  .grid[data-view="minimal"] .card__head,
-  .grid[data-view="minimal"] .card__desc,
-  .grid[data-view="minimal"] .card .icon-btn--copy,
-  .grid[data-view="minimal"] .card__admin-controls {
-    display: none !important;
-  }
   .grid[data-view="minimal"] .card__body {
-    display: block !important;
-    padding: 12px 0 !important;
-    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-rows: auto auto !important;
+    row-gap: 4px !important;
+    column-gap: 16px !important;
+    align-items: center !important;
+    padding: 16px 8px !important;
+  }
+  .grid[data-view="minimal"] .card__head {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
   }
   .grid[data-view="minimal"] .card__links {
-    display: block !important;
-    overflow: visible !important;
+    display: contents !important;
   }
   .grid[data-view="minimal"] .card__url {
-    display: inline-flex !important;
-    max-width: 100% !important;
-    padding: 0 !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    font-size: 13px !important;
+    margin-top: 2px !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
     white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    overflow-wrap: anywhere !important;
+    max-width: 100% !important;
+    display: flex !important;
   }
+  .grid[data-view="minimal"] .card .icon-btn--copy {
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+    align-self: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    display: grid !important;
+  }
+  .grid[data-view="minimal"] .card__admin-controls {
+    grid-column: 1 / span 2 !important;
+    grid-row: 3 !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid var(--border) !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+  }
+  .grid[data-view="minimal"] .card__admin-controls .icon-btn {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .grid[data-view="minimal"] .card__thumb,
+  .grid[data-view="minimal"] .card__desc {
+    display: none !important;
+  }
+
 
   /* Native iOS/Android Bottom-Sheet Modals */
   .modal-overlay {

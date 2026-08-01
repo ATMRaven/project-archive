@@ -5,6 +5,7 @@
 // Base API URL handling (for both Web and Native Capacitor Mobile App)
 const API_BASE_URL =
   window.location.origin.includes("localhost") ||
+  window.location.origin.includes("127.0.0.1") ||
   window.location.protocol === "file:" ||
   (window.Capacitor && window.Capacitor.isNativePlatform())
     ? "https://project-archive.atmr.workers.dev"
@@ -266,6 +267,19 @@ async function loadProjects() {
     const data = await res.json();
     projects = data.projects || [];
     categoryOrders = data.categoryOrders || [];
+
+    if (projects.length === 0 && !window.location.origin.includes("project-archive.atmr.workers.dev")) {
+      try {
+        const prodRes = await fetch("https://project-archive.atmr.workers.dev/api/projects?isAdmin=" + isAdmin);
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          if (prodData.projects && prodData.projects.length > 0) {
+            projects = prodData.projects;
+            if (prodData.categoryOrders) categoryOrders = prodData.categoryOrders;
+          }
+        }
+      } catch (e) {}
+    }
 
     saveToCache(projects);
     try {

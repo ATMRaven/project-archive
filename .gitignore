@@ -5,3 +5,6 @@ www/
 android/app/build/
 android/build/
 android/.gradle/
+chrome/
+*.py
+
