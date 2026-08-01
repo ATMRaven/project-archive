@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive — Selected Work</title>
+<meta name="description" content="A curated archive of projects.">
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+
+<!-- Fonts: Fraunces (display serif) + Inter (body) + JetBrains Mono (utility/urls) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Ambient background layer -->
+<div class="ambient" aria-hidden="true">
+  <div class="ambient__glow ambient__glow--one"></div>
+  <div class="ambient__glow ambient__glow--two"></div>
+  <div class="ambient__grain"></div>
+</div>
+
+<!-- Admin session bar -->
+<div class="admin-bar" id="adminBar" hidden>
+  <span class="admin-bar__dot" aria-hidden="true"></span>
+  <span class="admin-bar__label">Admin session active</span>
+  <button class="admin-bar__logout" id="logoutBtn" type="button">Log out</button>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="site-header__top">
+      <div class="site-header__brand">
+        <img class="site-logo" src="/icons/icon-192.png" alt="Raven Logo" style="width: 48px; height: 48px; object-fit: contain;">
+        <p class="eyebrow">Project Archive</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5V5M12 19v2.5M4.2 4.2 6 6M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8 6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <h1 class="site-title">Selected&nbsp;Work</h1>
+    <p class="site-subtitle">A running archive of what I've built — experiments, tools, and finished things worth revisiting.</p>
+    <div class="hairline" aria-hidden="true"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div class="toolbar__left">
+      <div class="view-toggles" id="viewToggles">
+        <button class="view-btn is-active" data-view="grid" aria-label="Grid view" title="Grid">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </button>
+        <button class="view-btn" data-view="minimal" aria-label="Minimal view" title="Minimal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        </button>
+      </div>
+
+      <div class="custom-select" id="sortCustomSelect">
+        <button class="custom-select__trigger" id="sortSelectTrigger" type="button" aria-expanded="false" aria-haspopup="listbox">
+          <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+          <span class="custom-select__label" id="sortSelectLabel">✨ Newest First</span>
+          <svg class="custom-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="custom-select__dropdown" id="sortDropdown" role="listbox" hidden>
+          <button class="custom-select__option is-selected" data-value="newest" role="option" type="button">
+            <span class="option-icon">✨</span>
+            <span class="option-label">Newest First</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="oldest" role="option" type="button">
+            <span class="option-icon">⏳</span>
+            <span class="option-label">Oldest First</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="popular" role="option" type="button">
+            <span class="option-icon">🔥</span>
+            <span class="option-label">Most Popular</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+          <button class="custom-select__option" data-value="alphabetical" role="option" type="button">
+            <span class="option-icon">🔤</span>
+            <span class="option-label">Alphabetical (A-Z)</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>
+        </div>
+      </div>
+
+    <div class="admin-toolbar" id="adminToolbar" hidden>
+      <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
+      <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" >Reorder Categories</button>
+      <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" >🤖 AI Assistant</button>
+      <button class="btn btn--ghost" id="trashBtn" type="button" >🗑️ Trash Bin</button>
+    </div>
+  </div>
+
+  <!-- Search & Category Filters -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search projects by name, description, or tag..." aria-label="Search projects">
+    </div>
+    <div class="category-chips" id="categoryChips">
+      <!-- Generated dynamically -->
+    </div>
+  </div>
+
+  <section id="grid" class="grid" data-view="grid" aria-live="polite"></section>
+
+  <p id="emptyState" class="empty-state" hidden>Nothing matches your search or selected category.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="site-footer__text"><a href="/ping" id="pingSecretTrigger" class="ping-secret-trigger">Built</a> and maintained by hand by A.T.M.R.<span id="secretTrigger" class="secret-trigger"></span></p>
+  </div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button class="modal__close" id="loginClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Restricted</p>
+    <h2 id="loginTitle" class="modal__title">Admin Access</h2>
+    <form id="loginForm" class="form" novalidate>
+      <label class="field">
+        <span class="field__label">Password</span>
+        <input class="field__input" type="password" id="passwordInput" autocomplete="current-password" required>
+      </label>
+      <p class="field__error" id="loginError" hidden>Incorrect password. Try again.</p>
+      <div class="form__actions">
+        <button type="button" class="btn btn--ghost" id="loginCancel">Cancel</button>
+        <button type="submit" class="btn btn--primary">Enter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add / Edit Project Modal -->
+<div class="modal-overlay" id="projectOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+    <button class="modal__close" id="projectClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal" id="projectEyebrow">New Entry</p>
+    <h2 id="projectModalTitle" class="modal__title">Add Project</h2>
+    <form id="projectForm" class="form" novalidate>
+      <input type="hidden" id="projectId">
+      <label class="field">
+        <span class="field__label">Title</span>
+        <input class="field__input" type="text" id="titleInput" required maxlength="120">
+      </label>
+      <label class="field">
+        <span class="field__label">Description</span>
+        <textarea class="field__input field__input--area" id="descriptionInput" rows="3" maxlength="280"></textarea>
+      </label>
+      <label class="field">
+        <span class="field__label">URL</span>
+        <input class="field__input field__input--mono" type="url" id="urlInput" placeholder="https://" required>
+      </label>
+      <label class="field">
+        <span class="field__label">Category / Tag</span>
+        <input class="field__input" type="text" id="categoryInput" placeholder="e.g. Web App, CLI, Design" list="categorySuggestions" maxlength="40">
+        <datalist id="categorySuggestions"></datalist>
+      </label>
+      <label class="field field--row">
+        <span class="field__label">Hidden from public view</span>
+        <button type="button" class="switch" id="hiddenSwitch" role="switch" aria-checked="false">
+          <span class="switch__thumb"></span>
+        </button>
+      </label>
+      <div class="form__actions">
+        <button type="button" class="btn btn--ghost" id="projectCancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" id="projectSubmit">Save project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reorder Categories Modal -->
+<div class="modal-overlay" id="categoriesOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="categoriesTitle">
+    <button class="modal__close" id="categoriesClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Admin</p>
+    <h2 id="categoriesTitle" class="modal__title">Reorder Categories</h2>
+    <div style="margin: 20px 0;">
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px; line-height: 1.4;">Prioritize categories. Items at the top will be shown first in navigation.</p>
+      <ul id="categoriesOrderList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
+        <!-- Populated dynamically -->
+      </ul>
+    </div>
+    <div class="form__actions">
+      <button type="button" class="btn btn--ghost" id="categoriesCancel">Cancel</button>
+      <button type="button" class="btn btn--primary" id="categoriesSave">Save Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="modal-overlay" id="deleteOverlay" hidden>
+  <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <button class="modal__close" id="deleteClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Confirm</p>
+    <h2 id="deleteTitle" class="modal__title">Delete this project?</h2>
+    <p class="modal__body">This can't be undone. <strong id="deleteProjectName"></strong> will be removed from the archive.</p>
+    <div class="form__actions">
+      <button type="button" class="btn btn--ghost" id="deleteCancel">Cancel</button>
+      <button type="button" class="btn btn--danger" id="deleteConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- 100% Free AI Admin Assistant Modal Drawer -->
+<div class="modal-overlay" id="aiAgentOverlay" hidden>
+  <div class="modal modal--ai" role="dialog" aria-modal="true" aria-labelledby="aiAgentTitle">
+    <button class="modal__close" id="aiAgentClose" type="button" aria-label="Close">&times;</button>
+    <div class="ai-header">
+      <div class="ai-avatar">🤖</div>
+      <div>
+        <p class="eyebrow eyebrow--modal">100% Free AI Admin Agent</p>
+        <h2 id="aiAgentTitle" class="modal__title">Raven AI Assistant</h2>
+      </div>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <div class="ai-chat" id="aiChatContainer">
+      <div class="ai-msg ai-msg--agent">
+        👋 Hi Admin! I'm your free AI assistant powered by Cloudflare Workers AI.
+        <br><br>
+        Tell or speak to me what to do:
+        <ul>
+          <li><em>"Add https://github.com/vitejs/vite under Web Tools"</em></li>
+          <li><em>"Hide all projects in Experiments category"</em></li>
+          <li><em>"Delete the test project"</em></li>
+          <li><em>"Sort by most popular"</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Suggested Quick Action Chips -->
+    <div class="ai-chips" id="aiChips">
+      <button class="ai-chip" data-cmd="Add https://github.com/facebook/react under Web Tools">➕ Add React URL</button>
+      <button class="ai-chip" data-cmd="Sort archive by most popular">🔥 Sort Popular</button>
+      <button class="ai-chip" data-cmd="Show all hidden projects">👁️ Unhide All</button>
+    </div>
+
+    <!-- Command Input Bar with Mic Voice Button -->
+    <form id="aiAgentForm" class="ai-input-bar">
+      <button type="button" class="ai-mic-btn" id="aiVoiceBtn" title="Voice command input" aria-label="Voice input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <input class="ai-input" type="text" id="aiCommandInput" placeholder="Speak or type an admin command..." required autocomplete="off">
+      <button type="submit" class="btn btn--primary ai-send-btn" id="aiSendBtn">Send</button>
+    </form>
+  </div>
+</div>
+
+<!-- Recently Deleted Trash Bin Modal -->
+<div class="modal-overlay" id="trashOverlay" hidden>
+  <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="trashTitle">
+    <button class="modal__close" id="trashClose" type="button" aria-label="Close">&times;</button>
+    <p class="eyebrow eyebrow--modal">Recovery Bin</p>
+    <h2 id="trashTitle" class="modal__title">🗑️ Recently Deleted Projects</h2>
+    <p class="modal__body">Revive soft-deleted items back into your active archive list at any time.</p>
+    
+    <div class="trash-list" id="trashListContainer">
+      <!-- Dynamically populated trash items -->
+    </div>
+  </div>
+</div>
+
+<!-- Abandoned Legacy Project Pop-up Modal -->
+<div class="modal-overlay modal-overlay--active" id="abandonedOverlay" style="display: flex; z-index: 10000; background: rgba(3, 7, 18, 0.92); backdrop-filter: blur(12px);">
+  <div class="modal modal--md" role="dialog" aria-modal="true" style="max-width: 520px; border: 1px solid rgba(239, 68, 68, 0.4); text-align: center; background: rgba(15, 23, 42, 0.95); box-shadow: 0 0 50px rgba(239, 68, 68, 0.25); padding: 28px;">
+    <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+      ⚠️ Notice: Legacy Project Abandoned
+    </div>
+    <h2 class="modal__title" style="font-size: 1.35rem; color: #fff; margin-bottom: 8px;">
+      This Archive Link Has Been Abandoned!
+    </h2>
+    <p class="modal__body" style="font-size: 0.88rem; color: #94a3b8; line-height: 1.5; margin-bottom: 20px;">
+      This original Netlify & Supabase project archive is <strong>permanently retired and abandoned</strong>. No new projects, links, or updates will ever be added to this legacy site.
+      <br/><br/>
+      Please switch to our brand-new, lightning-fast <strong>Cloudflare Edition</strong> or download the official Android App!
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+      <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" class="btn btn--primary" style="padding: 12px 20px; font-size: 0.95rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); color: #fff; border-radius: 8px; box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);">
+        🚀 Open New Cloudflare Archive
+      </a>
+
+      <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 12px 20px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.08); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px;">
+        📱 Download Android App (.APK)
+      </a>
+
+      <button type="button" onclick="document.getElementById('abandonedOverlay').style.display='none';" style="background: none; border: none; color: #64748b; font-size: 0.8rem; margin-top: 6px; cursor: pointer; text-decoration: underline;">
+        Continue to legacy read-only site ✕
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
