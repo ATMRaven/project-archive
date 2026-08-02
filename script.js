@@ -1172,69 +1172,145 @@ window.restoreProject = async function (id) {
 };
 
 // ============================================================================
+// Mobile & Web In-App Auto-Update Manager
+// ============================================================================
+const APP_VERSION = "1.0.0";
+
+const updateOverlay = document.getElementById("updateOverlay");
+const updateClose = document.getElementById("updateClose");
+const updateLaterBtn = document.getElementById("updateLaterBtn");
+const updateNowBtn = document.getElementById("updateNowBtn");
+
+function openUpdateModal(versionData) {
+  if (!updateOverlay) return;
+
+  const badge = document.getElementById("updateBadge");
+  const desc = document.getElementById("updateDesc");
+  const notesList = document.getElementById("updateNotesList");
+
+  if (badge && versionData.latestVersion) {
+    badge.textContent = `v${versionData.latestVersion}`;
+  }
+  if (desc && versionData.title) {
+    desc.textContent = versionData.title;
+  }
+  if (notesList && Array.isArray(versionData.releaseNotes)) {
+    notesList.innerHTML = versionData.releaseNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("");
+  }
+
+  if (updateNowBtn) {
+    updateNowBtn.href = versionData.apkUrl || versionData.downloadUrl || "#";
+  }
+
+  updateOverlay.hidden = false;
+  updateOverlay.classList.add("is-visible");
+}
+
+function closeUpdateModal() {
+  if (!updateOverlay) return;
+  updateOverlay.classList.remove("is-visible");
+  updateOverlay.hidden = true;
+}
+
+if (updateClose) updateClose.addEventListener("click", closeUpdateModal);
+if (updateLaterBtn) {
+  updateLaterBtn.addEventListener("click", () => {
+    if (window._currentUpdateVersion) {
+      sessionStorage.setItem("dismissedUpdateVersion", window._currentUpdateVersion);
+    }
+    closeUpdateModal();
+  });
+}
+if (updateOverlay) {
+  updateOverlay.addEventListener("click", (e) => {
+    if (e.target === updateOverlay) closeUpdateModal();
+  });
+}
+
+function compareVersions(v1, v2) {
+  const parts1 = String(v1).replace(/^v/i, "").split(".").map(Number);
+  const parts2 = String(v2).replace(/^v/i, "").split(".").map(Number);
+  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+    const val1 = parts1[i] || 0;
+    const val2 = parts2[i] || 0;
+    if (val1 > val2) return 1;
+    if (val1 < val2) return -1;
+  }
+  return 0;
+}
+
+function isCapacitorNativeApp() {
+  if (typeof window === "undefined") return false;
+  
+  // Allow manual developer testing via URL query parameter ?testUpdate=true
+  if (window.location.search.includes("testUpdate=true")) return true;
+
+  // Capacitor Native Platform check (Android & iOS)
+  if (window.Capacitor) {
+    if (typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform()) {
+      return true;
+    }
+    if (typeof window.Capacitor.getPlatform === "function") {
+      const platform = window.Capacitor.getPlatform();
+      if (platform === "android" || platform === "ios") return true;
+    }
+  }
+
+  // Android / iOS native webview protocol check
+  if (window.location.protocol === "file:") return true;
+
+  return false;
+}
+
+async function checkAppUpdates() {
+  // ONLY show APK update modal when running inside the Capacitor mobile app shell!
+  if (!isCapacitorNativeApp()) {
+    console.log("[Update Check] Skipped — running in web browser mode.");
+    return;
+  }
+
+  try {
+    let res = await fetch(`${API_BASE_URL}/api/version`).catch(() => null);
+    if (!res || !res.ok) {
+      res = await fetch("/api/version").catch(() => null);
+    }
+    if (!res || !res.ok) return;
+    const data = await res.json();
+
+    if (data && data.latestVersion) {
+      window._currentUpdateVersion = data.latestVersion;
+      if (compareVersions(data.latestVersion, APP_VERSION) > 0) {
+        const dismissed = sessionStorage.getItem("dismissedUpdateVersion");
+        if (dismissed !== data.latestVersion || data.forceUpdate) {
+          setTimeout(() => openUpdateModal(data), 600);
+        }
+      }
+    }
+  } catch (err) {
+    console.log("[Update Check] Skipped check:", err);
+  }
+}
+
+// ============================================================================
 // Init
 // ============================================================================
 loadProjects();
+checkAppUpdates();
 
-// Automatically inject and show Abandoned Project Warning Pop-up Modal
-(function showAbandonedModal() {
-  if (document.getElementById("abandonedOverlay")) return;
-
-  const overlay = document.createElement("div");
-  overlay.id = "abandonedOverlay";
-  overlay.className = "modal-overlay modal-overlay--active";
-  overlay.style.cssText = `
-    display: flex !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 999999 !important;
-    background: rgba(3, 7, 18, 0.94) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 20px !important;
-  `;
-
-  overlay.innerHTML = `
-    <div style="max-width: 520px; width: 100%; border: 1px solid rgba(239, 68, 68, 0.4); text-align: center; background: rgba(15, 23, 42, 0.96); box-shadow: 0 0 60px rgba(239, 68, 68, 0.3); padding: 32px; border-radius: 16px; font-family: system-ui, -apple-system, sans-serif;">
-      <div style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 999px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
-        ⚠️ Notice: Legacy Project Abandoned
-      </div>
-      <h2 style="font-size: 1.45rem; color: #fff; margin-bottom: 10px; font-weight: 700; line-height: 1.3;">
-        This Archive Link Has Been Permanently Abandoned!
-      </h2>
-      <p style="font-size: 0.9rem; color: #94a3b8; line-height: 1.6; margin-bottom: 24px;">
-        This original Netlify & Supabase project archive is <strong>permanently retired and abandoned</strong>. No new projects, links, or updates will ever be added to this site.
-        <br/><br/>
-        Please switch to our brand-new, lightning-fast <strong>Cloudflare Edition</strong> or download the official Android App!
-      </p>
-
-      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-        <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" style="padding: 14px 20px; font-size: 0.98rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); color: #fff; border-radius: 10px; box-shadow: 0 0 24px rgba(124, 58, 237, 0.4); border: none; cursor: pointer;">
-          🚀 Open New Cloudflare Archive
-        </a>
-
-        <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" style="padding: 12px 20px; font-size: 0.92rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.08); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px;">
-          📱 Download Android App (.APK)
-        </a>
-
-        <button type="button" onclick="document.getElementById('abandonedOverlay').remove();" style="background: none; border: none; color: #64748b; font-size: 0.82rem; margin-top: 6px; cursor: pointer; text-decoration: underline;">
-          Continue to legacy read-only site ✕
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-})();
-
-// Register service worker for PWA / offline support
+// Register service worker for PWA / offline support & live updates
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").catch(() => {});
+  navigator.serviceWorker
+    .register("/sw.js")
+    .then((reg) => {
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            showToast("✨ New web update ready. Tap to refresh!", 6000);
+          }
+        });
+      });
+    })
+    .catch(() => {});
 }

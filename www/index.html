@@ -278,33 +278,36 @@
   </div>
 </div>
 
-<!-- Abandoned Legacy Project Pop-up Modal -->
-<div class="modal-overlay modal-overlay--active" id="abandonedOverlay" style="display: flex; z-index: 10000; background: rgba(3, 7, 18, 0.92); backdrop-filter: blur(12px);">
-  <div class="modal modal--md" role="dialog" aria-modal="true" style="max-width: 520px; border: 1px solid rgba(239, 68, 68, 0.4); text-align: center; background: rgba(15, 23, 42, 0.95); box-shadow: 0 0 50px rgba(239, 68, 68, 0.25); padding: 28px;">
-    <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
-      ⚠️ Notice: Legacy Project Abandoned
+<!-- Mobile & Web In-App Update Modal -->
+<div class="modal-overlay" id="updateOverlay" hidden>
+  <div class="modal modal--md update-modal" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
+    <button class="modal__close" id="updateClose" type="button" aria-label="Close">&times;</button>
+    <div class="update-modal__header">
+      <span class="update-badge" id="updateBadge">v1.1.0</span>
+      <p class="eyebrow eyebrow--modal">New Release Available</p>
+      <h2 id="updateTitle" class="modal__title">🚀 Update Selected Work</h2>
     </div>
-    <h2 class="modal__title" style="font-size: 1.35rem; color: #fff; margin-bottom: 8px;">
-      This Archive Link Has Been Abandoned!
-    </h2>
-    <p class="modal__body" style="font-size: 0.88rem; color: #94a3b8; line-height: 1.5; margin-bottom: 20px;">
-      This original Netlify & Supabase project archive is <strong>permanently retired and abandoned</strong>. No new projects, links, or updates will ever be added to this legacy site.
-      <br/><br/>
-      Please switch to our brand-new, lightning-fast <strong>Cloudflare Edition</strong> or download the official Android App!
-    </p>
+    
+    <div class="update-modal__body">
+      <p class="update-desc" id="updateDesc">A new version of Selected Work is ready to install!</p>
 
-    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-      <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" class="btn btn--primary" style="padding: 12px 20px; font-size: 0.95rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%); color: #fff; border-radius: 8px; box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);">
-        🚀 Open New Cloudflare Archive
-      </a>
+      <div class="update-notes-box">
+        <h4 class="update-notes-title">✨ What's New:</h4>
+        <ul class="update-notes-list" id="updateNotesList">
+          <li>Seamless in-app updates without deleting the app</li>
+          <li>Performance and security improvements</li>
+        </ul>
+      </div>
 
-      <a href="https://project-archive.atmr.workers.dev" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 12px 20px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.08); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px;">
-        📱 Download Android App (.APK)
-      </a>
+      <div class="update-notice">
+        <svg class="update-notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span><strong>No need to delete the app!</strong> Tapping <em>Update Now</em> installs the new build directly over your current app with all settings preserved.</span>
+      </div>
+    </div>
 
-      <button type="button" onclick="document.getElementById('abandonedOverlay').style.display='none';" style="background: none; border: none; color: #64748b; font-size: 0.8rem; margin-top: 6px; cursor: pointer; text-decoration: underline;">
-        Continue to legacy read-only site ✕
-      </button>
+    <div class="modal__footer update-modal__actions">
+      <button class="btn btn--ghost" id="updateLaterBtn" type="button">Remind Me Later</button>
+      <a class="btn btn--primary update-btn" id="updateNowBtn" href="#" target="_blank" rel="noopener">⚡ Update Now</a>
     </div>
   </div>
 </div>

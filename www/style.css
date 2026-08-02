@@ -290,6 +290,9 @@ main.wrap {
   justify-content: flex-end;
   margin-bottom: 28px;
 }
+.admin-toolbar[hidden] {
+  display: none !important;
+}
 
 /* ==========================================================================
    Toolbar (view toggles + admin actions)
@@ -1679,7 +1682,10 @@ main.wrap {
   }
 
   /* Admin Toolbar on Mobile */
-  .admin-toolbar {
+  .admin-toolbar[hidden] {
+    display: none !important;
+  }
+  .admin-toolbar:not([hidden]) {
     display: flex !important;
     flex: 1 1 100% !important;
     flex-basis: 100% !important;
@@ -1724,17 +1730,6 @@ main.wrap {
     background: var(--surface) !important;
     border: 1px solid var(--border-strong) !important;
     color: var(--text-primary) !important;
-  }
-  .admin-toolbar::-webkit-scrollbar {
-    display: none;
-  }
-  .admin-toolbar .btn {
-    flex-shrink: 0;
-    height: 44px;
-    font-size: 14px;
-    padding: 0 16px;
-    border-radius: 12px;
-    white-space: nowrap;
   }
 
   /* Full Stacked Card Layout for Mobile */
@@ -2003,5 +1998,110 @@ main.wrap {
   align-items: center !important;
   justify-content: center !important;
   padding: 20px !important;
+}
+
+/* ============================================================================
+   Mobile & Web In-App Update Modal Styling
+   ============================================================================ */
+.update-modal {
+  border: 1px solid var(--accent-glow, rgba(235, 186, 114, 0.4));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(235, 186, 114, 0.15);
+  background: var(--bg-surface, #0f1015);
+}
+
+.update-modal__header {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.update-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--accent-glow, rgba(235, 186, 114, 0.2));
+  color: var(--accent, #ebba72);
+  border: 1px solid rgba(235, 186, 114, 0.3);
+  margin-bottom: 8px;
+}
+
+.update-modal__body {
+  margin-bottom: 24px;
+}
+
+.update-desc {
+  font-size: 15px;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.update-notes-box {
+  background: var(--surface-elevated, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.update-notes-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+  margin: 0 0 8px 0;
+}
+
+.update-notes-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--text-secondary, #cbd5e1);
+  line-height: 1.6;
+}
+
+.update-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(46, 213, 115, 0.08);
+  border: 1px solid rgba(46, 213, 115, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #2ed573;
+  line-height: 1.45;
+}
+
+.update-notice__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  stroke: #2ed573;
+  margin-top: 2px;
+}
+
+.update-modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.update-btn {
+  background: linear-gradient(135deg, var(--accent, #ebba72) 0%, #d4984f 100%) !important;
+  color: #0b0c10 !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  box-shadow: 0 4px 16px rgba(235, 186, 114, 0.25) !important;
+}
+
+.update-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(235, 186, 114, 0.35) !important;
 }
 
