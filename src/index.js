@@ -112,14 +112,14 @@ async function scrapeUrlMetadata(rawUrl) {
 // ----------------------------------------------------------------------------
 app.get("/api/version", (c) => {
   return c.json({
-    latestVersion: "1.1.0",
+    latestVersion: "1.2.0",
     minSupportedVersion: "1.0.0",
     releaseDate: "2026-08-02",
-    title: "✨ Version 1.1.0 Available",
+    title: "🚀 Version 1.2.0 Update Available",
     releaseNotes: [
-      "In-app seamless updates for mobile & web",
-      "Automatic background asset sync",
-      "UI responsiveness & performance improvements",
+      "New Version 1.2.0 update test",
+      "In-place APK auto-installation verified",
+      "Performance & UI optimizations",
     ],
     downloadUrl: "https://github.com/ATMRaven/project-archive/releases/latest",
     apkUrl: "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",
