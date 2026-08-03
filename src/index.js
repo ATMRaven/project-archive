@@ -112,14 +112,14 @@ async function scrapeUrlMetadata(rawUrl) {
 // ----------------------------------------------------------------------------
 app.get("/api/version", (c) => {
   return c.json({
-    latestVersion: "1.3.0",
+    latestVersion: "1.4.0",
     minSupportedVersion: "1.0.0",
     releaseDate: "2026-08-03",
-    title: "✨ Version 1.3.0 Available",
+    title: "✨ Version 1.4.0 Available",
     releaseNotes: [
-      "Mobile project creation & modal scroll fixes",
-      "Added Refresh button for desktop & mobile app",
-      "UI touch responsiveness & layout polish",
+      "Clean, spacious mobile admin controls layout",
+      "+ Add Project redesigned full-width for easy tapping",
+      "Mobile bottom-sheet form & input touch polish",
     ],
     downloadUrl: "https://github.com/ATMRaven/project-archive/releases/latest",
     apkUrl: "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",

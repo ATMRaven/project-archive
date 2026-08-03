@@ -1174,7 +1174,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.4.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");

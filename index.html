@@ -102,14 +102,24 @@
           <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
           <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/>
         </svg>
-        <span class="refresh-label">Refresh</span>
-      </button>
+    </div>
 
-      <div class="admin-toolbar" id="adminToolbar" hidden>
+    <div class="admin-toolbar" id="adminToolbar" hidden>
       <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
-      <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" >Reorder Categories</button>
-      <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" >🤖 AI Assistant</button>
-      <button class="btn btn--ghost" id="trashBtn" type="button" >🗑️ Trash Bin</button>
+      <div class="admin-toolbar__secondary">
+        <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" title="Reorder Categories">
+          <span class="btn-label-desktop">Reorder Categories</span>
+          <span class="btn-label-mobile">Reorder</span>
+        </button>
+        <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" title="AI Assistant">
+          <span class="btn-label-desktop">🤖 AI Assistant</span>
+          <span class="btn-label-mobile">🤖 AI Assistant</span>
+        </button>
+        <button class="btn btn--ghost" id="trashBtn" type="button" title="Trash Bin">
+          <span class="btn-label-desktop">🗑️ Trash Bin</span>
+          <span class="btn-label-mobile">🗑️ Trash</span>
+        </button>
+      </div>
     </div>
   </div>
 

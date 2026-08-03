@@ -287,11 +287,21 @@ main.wrap {
 
 .admin-toolbar {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 28px;
+  align-items: center;
+  gap: 10px;
 }
 .admin-toolbar[hidden] {
   display: none !important;
+}
+.admin-toolbar__secondary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Responsive Button Labels */
+.btn-label-mobile {
+  display: none;
 }
 
 /* ==========================================================================
@@ -1719,62 +1729,83 @@ main.wrap {
   }
   .toolbar__left {
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
-    gap: 12px !important;
-    width: 100% !important;
     justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
   }
 
   /* Mobile Refresh Button */
   .refresh-btn {
-    height: 42px !important;
-    padding: 0 14px !important;
-    border-radius: 12px !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
   }
   .refresh-label {
     display: inline-block !important;
-    font-size: 13.5px !important;
+    font-size: 13px !important;
   }
 
-  /* Admin Toolbar on Mobile */
+  /* Admin Toolbar on Mobile - Clean Stacked Layout */
   .admin-toolbar[hidden] {
     display: none !important;
   }
   .admin-toolbar:not([hidden]) {
     display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
+    flex-direction: column !important;
     gap: 10px !important;
     width: 100% !important;
-    margin: 12px 0 4px 0 !important;
-    padding: 4px 2px !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x !important;
-    scrollbar-width: none !important;
+    margin: 8px 0 0 0 !important;
+    padding: 12px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+  .admin-toolbar #addProjectBtn {
+    width: 100% !important;
+    height: 48px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, var(--accent, #ebba72) 0%, #d4984f 100%) !important;
+    color: #0b0c10 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px var(--accent-glow) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     box-sizing: border-box !important;
   }
-  .admin-toolbar::-webkit-scrollbar {
-    display: none !important;
+  .admin-toolbar__secondary {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
   }
-  .admin-toolbar .btn {
-    flex-shrink: 0 !important;
-    height: 46px !important;
-    font-size: 14px !important;
-    padding: 0 18px !important;
-    border-radius: 12px !important;
+  .admin-toolbar__secondary .btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    font-size: 13px !important;
+    padding: 0 6px !important;
+    border-radius: 10px !important;
     white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
-    touch-action: pan-x !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-sizing: border-box !important;
   }
-  .admin-toolbar #addProjectBtn {
-    background: linear-gradient(135deg, var(--accent, #ebba72) 0%, #d4984f 100%) !important;
-    color: #0b0c10 !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 16px var(--accent-glow) !important;
+
+  .btn-label-desktop {
+    display: none !important;
+  }
+  .btn-label-mobile {
+    display: inline !important;
   }
 
   /* Mobile Modal Layout & Form Touch Optimization */
