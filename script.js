@@ -1174,7 +1174,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");
@@ -1296,6 +1296,23 @@ async function checkAppUpdates() {
 // ============================================================================
 loadProjects();
 checkAppUpdates();
+
+// Refresh Button Event Listener
+const refreshBtn = $("refreshBtn");
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", async () => {
+    triggerHaptic("light");
+    const icon = refreshBtn.querySelector(".refresh-icon");
+    if (icon) icon.classList.add("is-spinning");
+
+    await loadProjects();
+
+    setTimeout(() => {
+      if (icon) icon.classList.remove("is-spinning");
+      showToast("✨ Archive refreshed");
+    }, 400);
+  });
+}
 
 // Register service worker for PWA / offline support & live updates
 if ("serviceWorker" in navigator) {

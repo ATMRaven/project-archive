@@ -97,7 +97,15 @@
         </div>
       </div>
 
-    <div class="admin-toolbar" id="adminToolbar" hidden>
+      <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh Archive" title="Refresh projects">
+        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
+          <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/>
+        </svg>
+        <span class="refresh-label">Refresh</span>
+      </button>
+
+      <div class="admin-toolbar" id="adminToolbar" hidden>
       <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
       <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" >Reorder Categories</button>
       <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" >🤖 AI Assistant</button>
