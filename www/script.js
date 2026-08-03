@@ -1174,7 +1174,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");
@@ -1313,6 +1313,228 @@ if (refreshBtn) {
     }, 400);
   });
 }
+
+// ============================================================================
+// Native Long-Press Context Menu & Stack Navigation Manager
+// ============================================================================
+const contextMenuOverlay = $("contextMenuOverlay");
+const cardDetailOverlay = $("cardDetailOverlay");
+let activeContextProject = null;
+
+function openContextMenu(project, x, y) {
+  if (!contextMenuOverlay) return;
+  activeContextProject = project;
+
+  const titleEl = $("ctxProjectTitle");
+  if (titleEl) titleEl.textContent = project.title || "Project Actions";
+
+  document.querySelectorAll(".ctx-admin-only").forEach(el => {
+    el.hidden = !isAdmin;
+  });
+
+  contextMenuOverlay.hidden = false;
+  contextMenuOverlay.removeAttribute("hidden");
+  contextMenuOverlay.classList.add("is-visible");
+}
+
+function closeContextMenu() {
+  if (!contextMenuOverlay) return;
+  contextMenuOverlay.hidden = true;
+  contextMenuOverlay.setAttribute("hidden", "");
+  contextMenuOverlay.classList.remove("is-visible");
+  activeContextProject = null;
+}
+
+if (contextMenuOverlay) {
+  contextMenuOverlay.addEventListener("click", (e) => {
+    if (e.target === contextMenuOverlay || e.target.closest("#ctxCancel")) {
+      triggerHaptic("light");
+      closeContextMenu();
+    }
+  });
+
+  $("ctxViewDetails")?.addEventListener("click", () => {
+    triggerHaptic("light");
+    const proj = activeContextProject;
+    closeContextMenu();
+    if (proj) openCardDetailModal(proj);
+  });
+
+  $("ctxOpenUrl")?.addEventListener("click", () => {
+    triggerHaptic("light");
+    const proj = activeContextProject;
+    closeContextMenu();
+    if (proj && proj.url) window.open(proj.url, "_blank");
+  });
+
+  $("ctxCopyUrl")?.addEventListener("click", () => {
+    triggerHaptic("success");
+    const proj = activeContextProject;
+    closeContextMenu();
+    if (proj && proj.url) {
+      navigator.clipboard.writeText(proj.url).then(() => showToast("URL copied!"));
+    }
+  });
+
+  $("ctxEditProject")?.addEventListener("click", () => {
+    triggerHaptic("medium");
+    const proj = activeContextProject;
+    closeContextMenu();
+    if (proj) openProjectModal(proj);
+  });
+
+  $("ctxDeleteProject")?.addEventListener("click", () => {
+    triggerHaptic("heavy");
+    const proj = activeContextProject;
+    closeContextMenu();
+    if (proj) openDeleteModal(proj);
+  });
+}
+
+// Card Detail Stack Modal
+function openCardDetailModal(project) {
+  if (!cardDetailOverlay) return;
+  $("detailCategory").textContent = project.category || "General";
+  $("cardDetailTitle").textContent = project.title || "";
+  $("detailDesc").textContent = project.description || "No description provided.";
+  
+  const urlBtn = $("detailUrlBtn");
+  if (urlBtn) urlBtn.href = project.url || "#";
+
+  cardDetailOverlay.hidden = false;
+  cardDetailOverlay.removeAttribute("hidden");
+  cardDetailOverlay.classList.add("is-visible");
+}
+
+function closeCardDetailModal() {
+  if (!cardDetailOverlay) return;
+  cardDetailOverlay.hidden = true;
+  cardDetailOverlay.setAttribute("hidden", "");
+  cardDetailOverlay.classList.remove("is-visible");
+}
+
+if (cardDetailOverlay) {
+  $("cardDetailClose")?.addEventListener("click", closeCardDetailModal);
+  cardDetailOverlay.addEventListener("click", (e) => {
+    if (e.target === cardDetailOverlay) closeCardDetailModal();
+  });
+  $("detailCopyBtn")?.addEventListener("click", () => {
+    const url = $("detailUrlBtn")?.href;
+    if (url) {
+      navigator.clipboard.writeText(url).then(() => {
+        triggerHaptic("success");
+        showToast("URL copied!");
+      });
+    }
+  });
+}
+
+// Long-press touchhold for card context menu
+let touchTimer = null;
+grid.addEventListener("touchstart", (e) => {
+  const card = e.target.closest(".card");
+  if (!card) return;
+  const id = card.dataset.id;
+  const project = projects.find(p => String(p.id) === String(id));
+  if (!project) return;
+
+  touchTimer = setTimeout(() => {
+    triggerHaptic("medium");
+    openContextMenu(project, e.touches[0].clientX, e.touches[0].clientY);
+  }, 450);
+}, { passive: true });
+
+grid.addEventListener("touchend", () => clearTimeout(touchTimer), { passive: true });
+grid.addEventListener("touchmove", () => clearTimeout(touchTimer), { passive: true });
+grid.addEventListener("contextmenu", (e) => {
+  const card = e.target.closest(".card");
+  if (card) {
+    e.preventDefault();
+    const id = card.dataset.id;
+    const project = projects.find(p => String(p.id) === String(id));
+    if (project) {
+      triggerHaptic("medium");
+      openContextMenu(project, e.clientX, e.clientY);
+    }
+  }
+});
+
+// ============================================================================
+// Hardware Back Button & Native Gesture Controller
+// ============================================================================
+function initNativeNavigation() {
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+    window.Capacitor.Plugins.App.addListener("backButton", () => {
+      // 1. Close context menu
+      if (contextMenuOverlay && !contextMenuOverlay.hidden) {
+        closeContextMenu();
+        triggerHaptic("light");
+        return;
+      }
+      // 2. Close active modals
+      const activeModal = document.querySelector(".modal-overlay:not([hidden])");
+      if (activeModal) {
+        activeModal.hidden = true;
+        activeModal.setAttribute("hidden", "");
+        activeModal.classList.remove("is-visible");
+        triggerHaptic("light");
+        return;
+      }
+      // 3. Clear search query
+      const searchInput = $("searchInput");
+      if (searchInput && searchInput.value.trim() !== "") {
+        searchInput.value = "";
+        filterProjects();
+        triggerHaptic("light");
+        return;
+      }
+      // 4. Reset category filter
+      if (activeCategory && activeCategory !== "all") {
+        activeCategory = "all";
+        updateCategoryChips();
+        filterProjects();
+        triggerHaptic("light");
+        return;
+      }
+      // 5. Minimize native app on root screen
+      window.Capacitor.Plugins.App.minimizeApp();
+    });
+
+    if (window.Capacitor.Plugins.Keyboard) {
+      window.Capacitor.Plugins.Keyboard.setResizeMode({ mode: "body" }).catch(() => {});
+    }
+  }
+
+  // Edge Swipe Right to Back/Dismiss Gesture
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  document.addEventListener("touchstart", (e) => {
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener("touchend", (e) => {
+    const deltaX = e.changedTouches[0].clientX - swipeStartX;
+    const deltaY = e.changedTouches[0].clientY - swipeStartY;
+
+    if (swipeStartX < 40 && deltaX > 75 && Math.abs(deltaY) < 50) {
+      if (contextMenuOverlay && !contextMenuOverlay.hidden) {
+        closeContextMenu();
+        triggerHaptic("light");
+        return;
+      }
+      const activeModal = document.querySelector(".modal-overlay:not([hidden])");
+      if (activeModal) {
+        activeModal.hidden = true;
+        activeModal.setAttribute("hidden", "");
+        activeModal.classList.remove("is-visible");
+        triggerHaptic("light");
+      }
+    }
+  }, { passive: true });
+}
+
+initNativeNavigation();
 
 // Register service worker for PWA / offline support & live updates
 if ("serviceWorker" in navigator) {

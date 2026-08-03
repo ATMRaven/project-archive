@@ -327,6 +327,53 @@
       <button class="btn btn--ghost" id="updateLaterBtn" type="button">Remind Me Later</button>
       <a class="btn btn--primary update-btn" id="updateNowBtn" href="#" target="_blank" rel="noopener">⚡ Update Now</a>
     </div>
+<!-- Long-Press Native Context Menu -->
+<div class="context-menu-overlay" id="contextMenuOverlay" hidden>
+  <div class="context-menu" id="contextMenu" role="menu">
+    <div class="context-menu__header">
+      <span class="context-menu__title" id="ctxProjectTitle">Project Actions</span>
+    </div>
+    <button type="button" class="context-menu__item" id="ctxViewDetails">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>View Details</span>
+    </button>
+    <button type="button" class="context-menu__item" id="ctxOpenUrl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <span>Open Link</span>
+    </button>
+    <button type="button" class="context-menu__item" id="ctxCopyUrl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span>Copy Link</span>
+    </button>
+    <button type="button" class="context-menu__item ctx-admin-only" id="ctxEditProject" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>Edit Project</span>
+    </button>
+    <button type="button" class="context-menu__item ctx-admin-only ctx-item--danger" id="ctxDeleteProject" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      <span>Move to Trash</span>
+    </button>
+    <button type="button" class="context-menu__item context-menu__item--cancel" id="ctxCancel">Cancel</button>
+  </div>
+</div>
+
+<!-- Project Detail Slide Stack View Overlay -->
+<div class="modal-overlay modal-overlay--stack" id="cardDetailOverlay" hidden>
+  <div class="modal modal--stack" role="dialog" aria-modal="true" aria-labelledby="cardDetailTitle">
+    <button class="modal__close" id="cardDetailClose" type="button" aria-label="Close">&times;</button>
+    <div class="card-detail-header">
+      <span class="chip chip--sm" id="detailCategory">Web App</span>
+      <h2 id="cardDetailTitle" class="modal__title">Project Details</h2>
+    </div>
+    <div class="card-detail-body">
+      <p class="card-detail-desc" id="detailDesc"></p>
+      <div class="card-detail-actions">
+        <a id="detailUrlBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--primary">
+          <span>Launch Project 🚀</span>
+        </a>
+        <button type="button" class="btn btn--ghost" id="detailCopyBtn">Copy Link 🔗</button>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -112,14 +112,16 @@ async function scrapeUrlMetadata(rawUrl) {
 // ----------------------------------------------------------------------------
 app.get("/api/version", (c) => {
   return c.json({
-    latestVersion: "1.4.0",
+    latestVersion: "1.5.0",
     minSupportedVersion: "1.0.0",
     releaseDate: "2026-08-03",
-    title: "✨ Version 1.4.0 Available",
+    title: "⚡ Version 1.5.0 Native Performance Release",
     releaseNotes: [
-      "Clean, spacious mobile admin controls layout",
-      "+ Add Project redesigned full-width for easy tapping",
-      "Mobile bottom-sheet form & input touch polish",
+      "Native Android Hardware Back Button integration",
+      "Long-press native popup context menu with haptics",
+      "60-120 FPS GPU rendering & iOS spring animations",
+      "Native edge swipe-to-dismiss gesture",
+      "Eliminated 300ms tap delay & text callout popups",
     ],
     downloadUrl: "https://github.com/ATMRaven/project-archive/releases/latest",
     apkUrl: "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",

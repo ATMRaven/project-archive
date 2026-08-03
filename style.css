@@ -2248,3 +2248,158 @@ main.wrap {
   box-shadow: 0 6px 20px rgba(235, 186, 114, 0.35) !important;
 }
 
+/* ============================================================================
+   Native Long-Press Context Menu & Stack Navigation Styles
+   ============================================================================ */
+.context-menu-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100vh;
+  z-index: 100000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.context-menu-overlay:not([hidden]) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.context-menu {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-elevated, #16171d);
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.12));
+  border-radius: 24px;
+  padding: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transform: translateY(100%);
+  transition: transform 350ms cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+
+.context-menu-overlay:not([hidden]) .context-menu {
+  transform: translateY(0);
+}
+
+.context-menu__header {
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.06));
+  margin-bottom: 4px;
+}
+
+.context-menu__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.context-menu__item {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  color: var(--text-primary, #f8fafc);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease;
+  box-sizing: border-box;
+}
+
+.context-menu__item svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--accent, #ebba72);
+  flex-shrink: 0;
+}
+
+.context-menu__item:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ctx-item--danger {
+  color: #ff4757;
+}
+
+.ctx-item--danger svg {
+  stroke: #ff4757;
+}
+
+.context-menu__item--cancel {
+  margin-top: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+/* Stack Detail View Modal */
+.modal-overlay--stack .modal--stack {
+  max-width: 560px;
+  border-radius: 28px;
+  padding: 28px;
+  transform: scale(0.95) translateY(20px);
+  transition: transform 350ms cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+
+.modal-overlay--stack:not([hidden]) .modal--stack {
+  transform: scale(1) translateY(0);
+}
+
+.card-detail-header {
+  margin-bottom: 16px;
+}
+
+.card-detail-desc {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.card-detail-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.card-detail-actions .btn {
+  flex: 1;
+  height: 48px;
+  font-size: 15px;
+  justify-content: center;
+}
+
+/* GPU 120FPS Performance Rules */
+html, body {
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+}
+
+.card, .btn, .chip, .modal {
+  touch-action: manipulation !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
