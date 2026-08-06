@@ -112,16 +112,14 @@ async function scrapeUrlMetadata(rawUrl) {
 // ----------------------------------------------------------------------------
 app.get("/api/version", (c) => {
   return c.json({
-    latestVersion: "1.5.0",
+    latestVersion: "1.6.0",
     minSupportedVersion: "1.0.0",
-    releaseDate: "2026-08-03",
-    title: "⚡ Version 1.5.0 Native Performance Release",
+    releaseDate: "2026-08-06",
+    title: "📱 Version 1.6.0 Shake Gesture Release",
     releaseNotes: [
-      "Native Android Hardware Back Button integration",
-      "Long-press native popup context menu with haptics",
-      "60-120 FPS GPU rendering & iOS spring animations",
-      "Native edge swipe-to-dismiss gesture",
-      "Eliminated 300ms tap delay & text callout popups",
+      "Shake Device Gesture to unlock Admin Login popup",
+      "Heavy haptic response on shake trigger",
+      "Native hardware back button & performance updates",
     ],
     downloadUrl: "https://github.com/ATMRaven/project-archive/releases/latest",
     apkUrl: "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",

@@ -579,6 +579,62 @@ secretTrigger.addEventListener("click", () => {
   openLoginModal();
 });
 
+// Shake Gesture Admin Login Trigger
+let lastX = null, lastY = null, lastZ = null;
+let lastShakeTime = 0;
+const SHAKE_THRESHOLD = 22; // Acceleration threshold for shake
+
+function initShakeGesture() {
+  if (typeof window === "undefined" || !("DeviceMotionEvent" in window)) return;
+
+  const handleMotion = (e) => {
+    if (isAdmin) return; // Don't trigger if already logged in as admin
+
+    const accel = e.accelerationIncludingGravity || e.acceleration;
+    if (!accel || accel.x === null) return;
+
+    const { x, y, z } = accel;
+
+    if (lastX !== null && lastY !== null && lastZ !== null) {
+      const deltaX = Math.abs(x - lastX);
+      const deltaY = Math.abs(y - lastY);
+      const deltaZ = Math.abs(z - lastZ);
+
+      const totalMotion = deltaX + deltaY + deltaZ;
+
+      if (totalMotion > SHAKE_THRESHOLD) {
+        const now = Date.now();
+        if (now - lastShakeTime > 1500) { // 1.5s debounce
+          lastShakeTime = now;
+          triggerHaptic("heavy");
+          showToast("🔐 Admin Access unlocked!");
+          openLoginModal();
+        }
+      }
+    }
+
+    lastX = x;
+    lastY = y;
+    lastZ = z;
+  };
+
+  // iOS 13+ permission handling if required
+  if (typeof DeviceMotionEvent.requestPermission === "function") {
+    document.addEventListener("click", function requestMotionPerm() {
+      DeviceMotionEvent.requestPermission().then(state => {
+        if (state === "granted") {
+          window.addEventListener("devicemotion", handleMotion, true);
+        }
+      }).catch(() => {});
+      document.removeEventListener("click", requestMotionPerm);
+    }, { once: true });
+  } else {
+    window.addEventListener("devicemotion", handleMotion, true);
+  }
+}
+
+initShakeGesture();
+
 function openLoginModal() {
   loginError.hidden = true;
   passwordInput.value = "";
@@ -1174,7 +1230,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.6.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");
