@@ -364,6 +364,42 @@ searchInput.addEventListener("input", (e) => {
 });
 
 // ============================================================================
+// Mobile bottom navigation dock
+// ============================================================================
+function setActiveNavTab(tab) {
+  document.querySelectorAll(".nav-tab").forEach((t) => {
+    t.classList.toggle("is-active", t.dataset.tab === tab);
+  });
+}
+
+const navTabs = document.querySelectorAll(".nav-tab");
+navTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    triggerHaptic("light");
+    const target = tab.dataset.tab;
+    setActiveNavTab(target);
+
+    if (target === "apps") {
+      selectedCategory = "all";
+      render();
+    } else if (target === "favs") {
+      selectedCategory = "favorites";
+      render();
+    } else if (target === "search") {
+      searchInput.focus();
+      searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (target === "vault") {
+      // Opens the admin login if locked, otherwise the add-project sheet.
+      if (isAdmin) {
+        openProjectModal();
+      } else {
+        openLoginModal();
+      }
+    }
+  });
+});
+
+// ============================================================================
 // Rendering & Sorting
 // ============================================================================
 function escapeHtml(str = "") {
@@ -1243,7 +1279,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.7.0";
+const APP_VERSION = "1.8.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");

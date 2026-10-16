@@ -1,0 +1,496 @@
+{
+  "version": "1.8.0",
+  "generatedAt": "2026-10-16",
+  "categories": [
+    {
+      "name": "Web Apps",
+      "order": 0,
+      "blurb": "Full web applications and progressive web platforms."
+    },
+    {
+      "name": "Mobile APKs",
+      "order": 1,
+      "blurb": "Signed native Android builds, direct download."
+    },
+    {
+      "name": "Digital Menus",
+      "order": 2,
+      "blurb": "Live restaurant menus and hospitality catalogues."
+    },
+    {
+      "name": "Salons & Beauty",
+      "order": 3,
+      "blurb": "Beauty, coiffure and lifestyle client platforms."
+    },
+    {
+      "name": "Games & 3D",
+      "order": 4,
+      "blurb": "WebGL worlds, physics engines and party games."
+    },
+    {
+      "name": "Tools & Utilities",
+      "order": 5,
+      "blurb": "Single-purpose utilities that earn their keep."
+    },
+    {
+      "name": "Portfolios & Demos",
+      "order": 6,
+      "blurb": "Personal portfolios, prototypes and client demos."
+    },
+    {
+      "name": "Health & Fitness",
+      "order": 7,
+      "blurb": "Training, nutrition and wellness trackers."
+    }
+  ],
+  "projects": [
+    {
+      "id": "0ef22483-48f4-46e4-83bc-586fc9f3fcdb",
+      "title": "VoxFlow Studio",
+      "url": "https://voxflow-809.pages.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "Multi-provider neural speech studio. Synthesises and transcribes through Deepgram, Cartesia Sonic, ElevenLabs and Gemini from one desk, with an archive of every take."
+    },
+    {
+      "id": "da42bf18-e8f9-44e6-bd65-14ec0faa5d16",
+      "title": "Dubber Web Studio",
+      "url": "https://dubber-web.pages.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "Real-time voice dubbing in the browser. Speaks one language, hears another, with live subtitles and system-audio capture for video."
+    },
+    {
+      "id": "27fa1add-c9e0-4349-9421-17cbf90367e2",
+      "title": "Dubber",
+      "url": "https://dubber.atmr.workers.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "The flagship edge build of the dubbing suite. Eleven languages out, twelve voices in, running serverless on Cloudflare Workers."
+    },
+    {
+      "id": "9e26fc16-22c6-4d09-b6b8-14ed7b3ef5ca",
+      "title": "SQL Quest",
+      "url": "https://sql-quest.atmr.workers.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "Learn SQL by writing it. A graded curriculum from first SELECT to normalisation and indexes, with every answer checked the moment you submit it."
+    },
+    {
+      "id": "atmr-drop-app-id",
+      "title": "ATMR Drop",
+      "url": "https://drop.atmr.workers.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "Cross-device transfer with no accounts and no setup. Peer-to-peer files up to 10 GB and clipboard sync, encrypted on the client before it ever leaves the device."
+    },
+    {
+      "id": "mindstream-adhd-notes-app",
+      "title": "MindStream",
+      "url": "https://mindstream-notes.pages.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "A note app built for restless minds. Dump a raw thought by voice or keyboard, let the AI tidy it later, and keep it local-first with optional Cloudflare sync."
+    },
+    {
+      "id": "2d86a0e0-5fc3-4082-98c2-09c235eb1dca",
+      "title": "LLM Chat",
+      "url": "https://llm-chat-premium.netlify.app",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "One chat window, many models. Switch between Groq and OpenRouter mid-conversation, compare answers side by side, and preview generated code inline."
+    },
+    {
+      "id": "ba4865a6-6660-4d7d-9a24-6df5ea287af7",
+      "title": "Grouper",
+      "url": "https://grouper-462.pages.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "Paste a roster, get balanced groups. Sorts a cohort into fair teams for breakout sessions, then seeds tournament brackets from the result."
+    },
+    {
+      "id": "2c9f5248-ee3b-47d6-a56c-c062085837ef",
+      "title": "Project Archive",
+      "url": "https://project-archive.atmr.workers.dev",
+      "category": "Web Apps",
+      "hidden": 0,
+      "description": "This archive, running at the edge. A Hono API on Cloudflare Workers over a D1 database, serving the same catalogue to web and Android from one source."
+    },
+    {
+      "id": "ae032f4b-37d5-4343-9a74-1b9b075b7fa3",
+      "title": "Voice Actors (APK)",
+      "url": "https://github.com/ATMRaven/voice-actors/releases/latest/download/voice-actors-latest.apk",
+      "category": "Mobile APKs",
+      "hidden": 0,
+      "description": "The neural speech studio as a signed Android app. Over-the-air updates, hardware back navigation, TTS profiles and an offline audio engine."
+    },
+    {
+      "id": "c55cdca0-f223-4260-b7d1-8bdde7824b90",
+      "title": "Dubber (APK)",
+      "url": "https://github.com/ATMRaven/dubber-android/releases/latest/download/Dubber.apk",
+      "category": "Mobile APKs",
+      "hidden": 0,
+      "description": "Dubber in your pocket. A one-tap language bar, subtitles-first stage and the same translation engine as the web studio, packaged for Android."
+    },
+    {
+      "id": "atmr-drop-mobile-apk-id",
+      "title": "ATMR Drop (APK)",
+      "url": "https://github.com/ATMRaven/atmr-drop/releases/latest/download/atmr-drop.apk",
+      "category": "Mobile APKs",
+      "hidden": 0,
+      "description": "The Android client for Drop. Hooks into the system share sheet, records audio in the background and keeps the same client-side encryption as the web app."
+    },
+    {
+      "id": "apk-mobile-app-id",
+      "title": "Selected Work (APK)",
+      "url": "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",
+      "category": "Mobile APKs",
+      "hidden": 0,
+      "description": "This archive as a native Android app. Updates itself in place, keeps the catalogue offline, and adds hardware back navigation throughout."
+    },
+    {
+      "id": "5f9481c4-5cdf-4f21-87a7-be01633d99cf",
+      "title": "Mr Pasta",
+      "url": "https://mr-pasta-menu.atmr.workers.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "A working menu system, not a PDF. 212 dishes with live sync, a waiter scanner, bilingual French and Arabic, and an admin panel with backup and restore."
+    },
+    {
+      "id": "37256796-234c-4934-8f85-f0b80f3aac1a",
+      "title": "L'Hacienda El Djazaïr",
+      "url": "https://hacienda-menu.atmr.workers.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Turkish grill house in Sétif. Royal charcoal grillades and Ottoman gastronomy across forty creations, open around the clock with table service."
+    },
+    {
+      "id": "9c7c1615-1969-43f9-829f-261079554ca8",
+      "title": "Vitalia",
+      "url": "https://vitalia-chp.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Italian pizzeria in Sétif. Pizzas, burgers and tacos with live size selection, add-ons and a running order total that survives a page refresh."
+    },
+    {
+      "id": "722aa518-2c4d-4be5-87d8-dd1a336c449c",
+      "title": "L'Asiatico",
+      "url": "https://asiatico.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Asian fusion and sushi in Sétif. Gourmet sushi rolls, nems, yakitori skewers and wok noodles, browsable by course with a basket that totals as you go."
+    },
+    {
+      "id": "887ce224-9a92-44e8-91cc-a9f227252419",
+      "title": "Original Frenchy",
+      "url": "https://frenchy.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Gourmet fast food in Sétif. French tacos, smash burgers, white-sauce wood-fired pizzas and Parisian crêpes, in a menu that loads fast on a phone."
+    },
+    {
+      "id": "6ea3c5aa-657d-440d-8834-e3c0f259bb06",
+      "title": "Five Pizza",
+      "url": "https://pizza-five.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Pizza, tacos and hamburgers in Sétif. A searchable catalogue with sizes, supplements and a cart, built to stay quick on a slow connection."
+    },
+    {
+      "id": "9ec1eec9-31b4-4a2d-b158-b745a0fe6f8c",
+      "title": "Crousty One",
+      "url": "https://crousty-one.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Crispy boxes, tacos and sandwiches. A fullscreen bilingual menu with add-on pricing and a cart, hosted on Cloudflare Pages."
+    },
+    {
+      "id": "d1cc7d17-fe76-4537-8f0f-517b9465365c",
+      "title": "Kunafista",
+      "url": "https://kunafista.netlify.app",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Kunafa done properly. A premium dessert house menu in French and Arabic, with a basket and the same warm visual language as the restaurant."
+    },
+    {
+      "id": "0fe9e43e-2cd4-4cdc-870d-6a4644ddc6f8",
+      "title": "Rollz",
+      "url": "https://rollz-dz.netlify.app",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Artisan rolled ice cream, tiramisu and cookie fries. A tap-to-explore premium menu with a bilingual interface and live cart."
+    },
+    {
+      "id": "4b6321cf-1c36-468f-a6b2-efd0a97f6a29",
+      "title": "SOLYT Café",
+      "url": "https://solyte.pages.dev",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "A café menu at Park Mall Sétif. Seventy-nine choices of coffee, mocktails, milkshakes and crêpes, with opening hours and directions on the landing card."
+    },
+    {
+      "id": "e2c927b1-3837-4c6f-b6fc-d1092f1b0c15",
+      "title": "Broaster",
+      "url": "https://broaster.netlify.app",
+      "category": "Digital Menus",
+      "hidden": 0,
+      "description": "Broasted chicken restaurant menu. Plates, sandwiches, galettes and pizzas in a bilingual fullscreen layout with social links and contact."
+    },
+    {
+      "id": "996ce443-22b4-45bf-acac-dd26be820691",
+      "title": "Marwa Dream",
+      "url": "https://marwa-dream.pages.dev",
+      "category": "Salons & Beauty",
+      "hidden": 0,
+      "description": "A haute couture house in Algiers. Evening gowns, linen separates and luxury leather goods, with express delivery across all 58 wilayas and cash on delivery."
+    },
+    {
+      "id": "1d26dd3f-aa4f-4930-b9a8-98f89cf06662",
+      "title": "Amira Beauty",
+      "url": "https://amira-beauty.atmr.workers.dev",
+      "category": "Salons & Beauty",
+      "hidden": 0,
+      "description": "A hair care salon in Sétif. Protein, keratin and botox treatments, colour and balayage, booked by appointment through a Cloudflare Worker and D1 admin space."
+    },
+    {
+      "id": "742cad35-bf92-438c-933a-441e03933009",
+      "title": "Stélane Coiffure",
+      "url": "https://stelane-salon-demo.atmr.workers.dev",
+      "category": "Salons & Beauty",
+      "hidden": 0,
+      "description": "A mixed salon in Villemomble. Cuts, colour, balayage and extensions with an appointment request flow, a services page and today's opening status."
+    },
+    {
+      "id": "7373e3e8-b2f8-41aa-b4af-98250c1dab61",
+      "title": "QuantumForge 3.0",
+      "url": "https://quantumforge.pages.dev",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "A falling-sand physics playground with living ragdolls. Nuclear reactors, dam breaks and zero-gravity orbits, all running at sixty frames a second in the browser."
+    },
+    {
+      "id": "9f34da88-9f91-4bb6-a5c6-4c182c36fe36",
+      "title": "Aerokinetic 9X",
+      "url": "https://exploded-gun-3d.atmr.workers.dev",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "Take a tactical sidearm apart in 3D. An exploded schematic of a 4140 steel slide assembly with real-time kinetic physics and touch inspection controls."
+    },
+    {
+      "id": "e18de849-e2d2-4d4f-8077-96c4c606e326",
+      "title": "CosmoPulse",
+      "url": "https://cosmopulse-q.pages.dev",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "An audio-visual particle sandbox. Canvas particles that answer to gravity, vortex and black-hole modes, scored by a pentatonic synthesizer you can play."
+    },
+    {
+      "id": "6bccc6bf-dbea-45bf-b3c0-1bdf0ade1d07",
+      "title": "Politics",
+      "url": "https://politics-new.netlify.app",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "A social deduction party game. Secret roles are dealt automatically and the table has to work out who is on their side, with Mr White and Serial Killer modes."
+    },
+    {
+      "id": "a2f4278a-b630-42dc-b8bd-8e34a0ecea09",
+      "title": "Politics (Classic)",
+      "url": "https://politics-2.netlify.app",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "The first build of Politics, kept as a record. The same deduction rules in a leaner shell, with the original role deck and discussion flow."
+    },
+    {
+      "id": "c8787120-fcbf-48c3-b26f-89ba1ec76da1",
+      "title": "A.T.M.R Games",
+      "url": "https://random-atmr.netlify.app",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "Five games of chance and memory. Coin flip, Russian roulette, random numbers, a memory challenge and rock paper scissors, all in one launcher."
+    },
+    {
+      "id": "bc1c0607-1a8a-405c-bb82-c273e259f882",
+      "title": "Scale & Perspective",
+      "url": "https://scale-perspective.atmr.workers.dev",
+      "category": "Games & 3D",
+      "hidden": 0,
+      "description": "Put a number in physical perspective. Compare masses, volumes and proportions side by side on calibrated 3D and 2D studio pedestals, from a rice grain upward."
+    },
+    {
+      "id": "683d4799-cfe6-4826-9138-faf8a62d98ca",
+      "title": "GPH Navette",
+      "url": "https://gph-navette.atmr.workers.dev",
+      "category": "Tools & Utilities",
+      "hidden": 0,
+      "description": "A driver's shift ledger for the perfumery factory shuttle. Logs each worker and route as it happens, tracks what is still owed, and works from cache when the signal drops."
+    },
+    {
+      "id": "7a8c9c54-2a50-4f53-b050-0c8ec1f9b567",
+      "title": "Outreach Control Deck",
+      "url": "https://outreach-cockpit.atmr.workers.dev",
+      "category": "Tools & Utilities",
+      "hidden": 0,
+      "description": "A B2B dispatch desk for cold outreach. Verifies every address with a full SMTP handshake before sending, de-duplicates the queue and scores leads with no website required."
+    },
+    {
+      "id": "3d801da7-7176-478e-923e-2e255c602dbb",
+      "title": "Telegram Groq Assistant",
+      "url": "https://tg-groq-worker.atmr.workers.dev",
+      "category": "Tools & Utilities",
+      "hidden": 0,
+      "description": "A Telegram bot that answers at Groq speed. Runs as a webhook on the Workers edge over LLaMA 3.3 and Mixtral, with a canvas view for longer replies."
+    },
+    {
+      "id": "3e238467-825e-4eb2-b3da-96b9e5c7fa77",
+      "title": "QR Code Generator",
+      "url": "https://atmr-premium-qr.netlify.app",
+      "category": "Tools & Utilities",
+      "hidden": 0,
+      "description": "Turn any link or text into a code, with styling controls and vector output for print. No sign-up, no watermark, no catch."
+    },
+    {
+      "id": "31a86afd-422f-44fa-8267-20814d8c691a",
+      "title": "Free Media Heck Yeah",
+      "url": "https://fmhy.net",
+      "category": "Tools & Utilities",
+      "hidden": 0,
+      "description": "The internet's largest index of free software, media and creator tools. A community-maintained reference that earns its place in any toolbox."
+    },
+    {
+      "id": "4ee2582d-1365-427a-9574-7cc39510e97c",
+      "title": "Aymen Draidi — Portfolio",
+      "url": "https://aymen-draidi.pages.dev",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "A personal site for a digital innovation specialist. Full-stack development and growth services, reachable in one tap by phone, WhatsApp, Telegram or Viber."
+    },
+    {
+      "id": "d9daee74-2ad3-4a70-83e5-b2d572037949",
+      "title": "3ATMR Creative Hub",
+      "url": "https://3atmr.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "The original archive and creative playground. Kept as a live record of where the catalogue began, before it moved to the Workers and D1 stack."
+    },
+    {
+      "id": "c5dddd11-85b6-4a9e-adc9-18532a7e66ce",
+      "title": "Kunafista Admin",
+      "url": "https://kunafistaa.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "The back office for the Kunafista menu. A customer view and an admin panel side by side, built to show how the menu would be run day to day."
+    },
+    {
+      "id": "b61aba8c-275d-4967-b8b6-1aaf7ab6a68b",
+      "title": "English Level Test",
+      "url": "https://eng-test-app.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "An English proficiency test that grades itself. Reading, vocabulary, grammar and writing sections, unique candidate codes, and QR sharing for students on mobile."
+    },
+    {
+      "id": "81d6b426-56df-407c-8b88-78bcf070a71b",
+      "title": "SportyShop DZ",
+      "url": "https://onlin-shop-demo.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "A storefront demo for an Algerian sports boutique. Footwear, apparel and accessories across three languages, with category browsing and a checkout flow."
+    },
+    {
+      "id": "448cf53a-5636-4b39-abaf-0ae85f8e2f23",
+      "title": "Rebuild Training",
+      "url": "https://workout-routine-atmr.netlify.app",
+      "category": "Health & Fitness",
+      "hidden": 0,
+      "description": "A strength programme built around one condition. Legs and abs with prescribed rep ranges, a form checklist per set, and progress that survives a refresh."
+    },
+    {
+      "id": "799cfe2c-1e90-4cc3-b31f-1a52c92e6d12",
+      "title": "Preem Calories",
+      "url": "https://preem-calories.netlify.app",
+      "category": "Health & Fitness",
+      "hidden": 0,
+      "description": "Calorie and macro tracking with a diamond edge. Daily budgets, meal logging, BMI and a progress history, in a dark interface that stays out of the way."
+    },
+    {
+      "id": "577c055c-2fc7-45ab-8516-a64c9ffb551c",
+      "title": "VoidCall",
+      "url": "https://voidcall.pages.dev",
+      "category": "Games & 3D",
+      "hidden": 1,
+      "description": "A tactical chess battler with a card layer. Six faction decks, solo against the Void AI or two players passing one device, with a codex of twenty-seven cards."
+    },
+    {
+      "id": "3cc48d2c-3663-406e-9276-8768c903523b",
+      "title": "AETHEL Gallery",
+      "url": "https://foot-gallery.atmr.workers.dev",
+      "category": "Portfolios & Demos",
+      "hidden": 1,
+      "description": "A curated image gallery with a moderation desk. Categorise, caption and publish works, then track views, likes and ratings from one admin panel."
+    },
+    {
+      "id": "05cb18c8-1fc1-4e5f-968c-b18ff6c8f11d",
+      "title": "Secret For Calu",
+      "url": "https://secret-for-calu.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 1,
+      "description": "A birthday portal dressed as a security breach. An Overwatch-themed identity check gates the message, with retro synthesised audio and a custom soundtrack."
+    },
+    {
+      "id": "5f1cb5e8-9829-4c86-a731-b11ddb068c50",
+      "title": "Visual Harvest",
+      "url": "https://download-please.netlify.app",
+      "category": "Tools & Utilities",
+      "hidden": 1,
+      "description": "Batch image harvesting from stock libraries. Filter by size, aspect ratio and colour, then pull whole search result sets in one pass."
+    },
+    {
+      "id": "4c7b3f3c-d5f6-4681-9128-bdf5abd06c48",
+      "title": "Cisco IOS Layers Visualizer",
+      "url": "https://router-visualizer-demo-1245.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 1,
+      "description": "A revision aid for the Cisco IOS modes. Walk from user EXEC to privileged EXEC and configuration in a simulated console that explains what each level allows."
+    },
+    {
+      "id": "d8404de2-d857-474f-9d8c-441577e84405",
+      "title": "Blockchain Revision Hub",
+      "url": "https://blockchain-revision-hub-v1.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 1,
+      "description": "A study desk for blockchain fundamentals. Flashcards, a slide deck and a forty-question quiz across easy, medium and hard, with lecture notes alongside."
+    },
+    {
+      "id": "9fd6f4c3-b5aa-4d4d-922d-c59af41d4c6c",
+      "title": "Story Detective",
+      "url": "https://detective-game-atmr.netlify.app",
+      "category": "Games & 3D",
+      "hidden": 1,
+      "description": "An AI mystery generator. Each round invents an accident and hands you the case file to interrogate, with characters and clues written on the fly."
+    },
+    {
+      "id": "928e857d-87ea-46fb-b05e-d66fb9699cab",
+      "title": "VoidMass Card Demo",
+      "url": "https://card-animations-demo.netlify.app",
+      "category": "Games & 3D",
+      "hidden": 1,
+      "description": "A card battler prototype. Draw, deploy troops to a grid and pick a perk between rounds — an animation and interaction study more than a finished game."
+    },
+    {
+      "id": "c526f94e-a78b-4b54-bcca-807f338240b2",
+      "title": "WuWa Calculator",
+      "url": "https://atmr-wuwa-calculator.netlify.app",
+      "category": "Tools & Utilities",
+      "hidden": 1,
+      "description": "A damage calculator for Wuthering Waves. Enter crit rate and crit damage to see what a build actually yields before you commit the materials."
+    },
+    {
+      "id": "ff218ef7-6351-49e2-b028-2ebf0a99fb93",
+      "title": "Numedians",
+      "url": "https://numedians.netlify.app",
+      "category": "Portfolios & Demos",
+      "hidden": 1,
+      "description": "A club site for a university society. Member resources and society information, built as a first client project and kept as an archive piece."
+    }
+  ]
+}
