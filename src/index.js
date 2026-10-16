@@ -112,14 +112,16 @@ async function scrapeUrlMetadata(rawUrl) {
 // ----------------------------------------------------------------------------
 app.get("/api/version", (c) => {
   return c.json({
-    latestVersion: "1.6.0",
+    latestVersion: "1.7.0",
     minSupportedVersion: "1.0.0",
-    releaseDate: "2026-08-06",
-    title: "📱 Version 1.6.0 Shake Gesture Release",
+    releaseDate: "2026-10-16",
+    title: "🏛️ Version 1.7.0 Luxury Atelier Redesign",
     releaseNotes: [
-      "Shake Device Gesture to unlock Admin Login popup",
-      "Heavy haptic response on shake trigger",
-      "Native hardware back button & performance updates",
+      "Obsidian & Champagne Gold luxury atelier visual system",
+      "Responsive 2-column mobile catalog & floating frosted navigation dock",
+      "Curated taxonomy reorganization across all 43 projects",
+      "Living WebGL fluid shader background with caustics and ambient glow",
+      "Hardware back button LIFO navigation and double-back to exit",
     ],
     downloadUrl: "https://github.com/ATMRaven/project-archive/releases/latest",
     apkUrl: "https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk",

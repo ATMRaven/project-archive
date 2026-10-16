@@ -436,60 +436,73 @@ function render() {
     return 0;
   });
 
+  // Update dynamic collection counter
+  const curationCountEl = document.getElementById("curationCount");
+  if (curationCountEl) {
+    const totalVisible = projects.filter(p => isAdmin ? true : !p.hidden).length;
+    curationCountEl.textContent = `${filtered.length} / ${totalVisible} Curations`;
+  }
+
   emptyState.hidden = filtered.length > 0;
 
   filtered.forEach((p, i) => {
     const card = document.createElement("article");
     card.className = "card";
-    card.style.animationDelay = `${Math.min(i * 20, 120)}ms`;
+    card.dataset.id = p.id;
+    card.style.animationDelay = `${Math.min(i * 25, 150)}ms`;
 
     const showHiddenBadge = isAdmin && p.hidden;
     const formattedUrl = ensureAbsoluteUrl(p.url);
     const thumb = thumbnailUrl(p.url);
     const isStarred = starredIds.includes(String(p.id));
 
+    const isApk = formattedUrl.toLowerCase().endsWith(".apk") || formattedUrl.toLowerCase().includes("releases/download");
+    const ctaLabel = isApk ? "Get APK" : "Launch Web";
+    const ctaIcon = isApk
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg>`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>`;
+
+    const badgeLabel = isApk ? "APK // RELEASE" : (p.category ? p.category.toUpperCase() : "WEB APP");
     const firstChar = escapeHtml((p.title || "P").charAt(0).toUpperCase());
+
     card.innerHTML = `
       <div class="card__thumb">
         <div class="card__thumb-fallback" aria-hidden="true">${firstChar}</div>
-        ${thumb ? `<img class="card__thumb-img" src="${thumb}" alt="" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` : ""}
+        ${thumb ? `<img class="card__thumb-img" src="${thumb}" alt="${escapeHtml(p.title)}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` : ""}
+        <div class="card__thumb-overlay"></div>
+        <span class="card__category-badge">${escapeHtml(badgeLabel)}</span>
+        <button class="card__bookmark-btn ${isStarred ? 'is-starred' : ''} btn-spring" data-action="star" data-id="${p.id}" aria-label="Favorite ${escapeHtml(p.title)}">
+          <svg viewBox="0 0 24 24" fill="${isStarred ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
       </div>
       <div class="card__body">
-        <div class="card__head">
-          <h3 class="card__title">
-            <a class="card__title-link" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer" data-id="${p.id}">${escapeHtml(p.title)}</a>
-          </h3>
-          <div class="card__badges">
-            <button class="icon-btn icon-btn--star ${isStarred ? 'is-starred' : ''}" data-action="star" data-id="${p.id}" aria-label="Favorite ${escapeHtml(p.title)}">
-              <svg viewBox="0 0 24 24" fill="${isStarred ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </button>
-            ${p.category ? `<span class="badge badge--category">${escapeHtml(p.category)}</span>` : ""}
-            ${showHiddenBadge ? '<span class="badge badge--hidden">Hidden</span>' : ""}
-          </div>
+        <div class="card__meta">
+          <span class="card__eyebrow">${escapeHtml(p.category || 'Archive')}</span>
+          ${showHiddenBadge ? '<span class="badge badge--hidden">Hidden</span>' : ''}
         </div>
+        <h3 class="card__title">
+          <a class="card__title-link" href="${escapeHtml(formattedUrl)}" ${isApk ? 'download' : 'target="_blank" rel="noopener noreferrer"'} data-id="${p.id}">${escapeHtml(p.title)}</a>
+        </h3>
         ${p.description ? `<p class="card__desc">${escapeHtml(p.description)}</p>` : ""}
-        <div class="card__links">
-          <a class="card__url" href="${escapeHtml(formattedUrl)}" target="_blank" rel="noopener noreferrer" data-id="${p.id}">
-            ${escapeHtml(displayUrl(p.url))}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        <div class="card__footer">
+          <a class="card__cta btn-spring" href="${escapeHtml(formattedUrl)}" ${isApk ? 'download' : 'target="_blank" rel="noopener noreferrer"'} data-id="${p.id}">
+            <span>${ctaLabel}</span>
+            ${ctaIcon}
           </a>
-          <button class="icon-btn icon-btn--copy" data-action="copy" data-url="${escapeHtml(formattedUrl)}" aria-label="Copy URL">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="1.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </button>
-        </div>
-        ${isAdmin ? `
-          <div class="card__admin-controls">
-            <button class="icon-btn" data-action="edit" data-id="${p.id}" aria-label="Edit ${escapeHtml(p.title)}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <div class="card__sub-actions">
+            <button class="icon-btn icon-btn--copy btn-spring" data-action="copy" data-url="${escapeHtml(formattedUrl)}" aria-label="Copy URL" title="Copy URL">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="1.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </button>
-            <button class="icon-btn" data-action="toggle" data-id="${p.id}" aria-label="Toggle visibility for ${escapeHtml(p.title)}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-            <button class="icon-btn icon-btn--danger" data-action="delete" data-id="${p.id}" aria-label="Delete ${escapeHtml(p.title)}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
-            </button>
+            ${isAdmin ? `
+              <button class="icon-btn icon-btn--edit btn-spring" data-action="edit" data-id="${p.id}" aria-label="Edit project" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button class="icon-btn icon-btn--danger btn-spring" data-action="delete" data-id="${p.id}" data-name="${escapeHtml(p.title)}" aria-label="Move to trash" title="Trash">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            ` : ''}
           </div>
-        ` : ""}
+        </div>
       </div>
     `;
     grid.appendChild(card);
@@ -1230,7 +1243,7 @@ window.restoreProject = async function (id) {
 // ============================================================================
 // Mobile & Web In-App Auto-Update Manager
 // ============================================================================
-const APP_VERSION = "1.6.0";
+const APP_VERSION = "1.7.0";
 
 const updateOverlay = document.getElementById("updateOverlay");
 const updateClose = document.getElementById("updateClose");
@@ -1516,18 +1529,219 @@ grid.addEventListener("contextmenu", (e) => {
 });
 
 // ============================================================================
-// Hardware Back Button & Native Gesture Controller
 // ============================================================================
+// WebGL Luxury Fluid Living Background Shader
+// ============================================================================
+function initAmbientShader() {
+  const canvas = document.getElementById("ambientShaderCanvas");
+  if (!canvas) return;
+
+  function syncSize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+  }
+  window.addEventListener("resize", syncSize, { passive: true });
+  syncSize();
+
+  const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+  if (!gl) return; // Gracefully falls back to CSS radial gradients
+
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+
+  const fs = `precision mediump float;
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+varying vec2 v_texCoord;
+
+float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+    for (int i = 0; i < 4; i++) {
+        v += a * noise(p);
+        p = rot * p * 2.05 + vec2(u_time * 0.03, -u_time * 0.02);
+        a *= 0.48;
+    }
+    return v;
+}
+
+void main() {
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    st.y = 1.0 - st.y;
+    vec2 p = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+    float t = u_time * 0.08;
+    float q = fbm(p * 1.3 + vec2(t * 0.15, t * -0.07));
+    float r = fbm(p * 1.8 + q * 1.1 + vec2(-t * 0.1, t * 0.06));
+
+    vec3 c_black = vec3(0.043, 0.043, 0.047);     // #0B0B0C deep pitch obsidian
+    vec3 c_charcoal = vec3(0.078, 0.078, 0.086);  // #141416
+    vec3 c_gold = vec3(0.83, 0.69, 0.35);         // #D4AF37 champagne gold
+
+    float dist = length(st - vec2(0.5, 0.45));
+    float vignette = smoothstep(1.1, 0.25, dist);
+
+    float highlight = smoothstep(0.52, 0.70, r) * (1.0 - smoothstep(0.70, 0.88, r));
+    float goldGlow = pow(highlight, 2.4) * 0.18;
+    float sheen = pow(smoothstep(0.35, 0.65, q), 3.0) * 0.08;
+
+    vec3 color = mix(c_black, c_charcoal, r * 0.85);
+    color += c_gold * (goldGlow + sheen * 0.5);
+
+    // Subtle film grain
+    float grain = (hash(st * 1200.0 + fract(u_time * 2.0)) - 0.5) * 0.012;
+    color += grain;
+
+    color *= mix(0.82, 1.04, vignette);
+    gl_FragColor = vec4(color, 1.0);
+}`;
+
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+  const pos = gl.getAttribLocation(prog, "a_position");
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+  const uTime = gl.getUniformLocation(prog, "u_time");
+  const uRes = gl.getUniformLocation(prog, "u_resolution");
+  const uMouse = gl.getUniformLocation(prog, "u_mouse");
+
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener("mousemove", (event) => {
+    mouse.x = event.clientX;
+    mouse.y = canvas.height - event.clientY;
+  }, { passive: true });
+
+  let lastFrame = 0;
+  function renderShader(t) {
+    if (t - lastFrame > 24) { // Cap at ~40fps for battery efficiency
+      lastFrame = t;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      if (uTime) gl.uniform1f(uTime, t * 0.001);
+      if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+      if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    requestAnimationFrame(renderShader);
+  }
+  renderShader(0);
+}
+
+// ============================================================================
+// Mobile Navigation Dock Controller
+// ============================================================================
+function initMobileNavDock() {
+  const dock = document.getElementById("mobileNavDock");
+  if (!dock) return;
+
+  dock.addEventListener("click", (e) => {
+    const tab = e.target.closest(".nav-tab");
+    if (!tab) return;
+    triggerHaptic("light");
+    const tabName = tab.dataset.tab;
+
+    dock.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("is-active"));
+    tab.classList.add("is-active");
+
+    if (tabName === "apps") {
+      selectedCategory = "all";
+      categoryChips.querySelectorAll(".chip").forEach(el => {
+        el.classList.toggle("is-active", el.dataset.category === "all");
+      });
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (tabName === "favs") {
+      selectedCategory = "favorites";
+      categoryChips.querySelectorAll(".chip").forEach(el => {
+        el.classList.toggle("is-active", el.dataset.category === "favorites");
+      });
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (tabName === "search") {
+      searchInput.focus();
+      searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (tabName === "vault") {
+      if (isAdmin) {
+        adminToolbar.scrollIntoView({ behavior: "smooth", block: "center" });
+        showToast("Admin session active 🛡️");
+      } else {
+        loginOverlay.hidden = false;
+        loginOverlay.classList.add("is-visible");
+        passwordInput.focus();
+      }
+    }
+  });
+}
+
+// ============================================================================
+// APK Banner Controller (Shows on browser, hides inside native APK)
+// ============================================================================
+function initApkBanner() {
+  const banner = document.getElementById("apkDownloadBanner");
+  if (!banner) return;
+  const isNative = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+  if (isNative) {
+    banner.hidden = true;
+  } else {
+    banner.hidden = false;
+  }
+}
+
+// ============================================================================
+// Hardware Back Button & Native Gesture Controller (Skill Rule B)
+// ============================================================================
+let backPressExitTimer = null;
+
 function initNativeNavigation() {
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
     window.Capacitor.Plugins.App.addListener("backButton", () => {
-      // 1. Close context menu
+      // 1. Overlays First (LIFO Stack)
       if (contextMenuOverlay && !contextMenuOverlay.hidden) {
         closeContextMenu();
         triggerHaptic("light");
         return;
       }
-      // 2. Close active modals
       const activeModal = document.querySelector(".modal-overlay:not([hidden])");
       if (activeModal) {
         activeModal.hidden = true;
@@ -1536,24 +1750,41 @@ function initNativeNavigation() {
         triggerHaptic("light");
         return;
       }
-      // 3. Clear search query
-      const searchInput = $("searchInput");
+      // 2. Clear active search query
       if (searchInput && searchInput.value.trim() !== "") {
         searchInput.value = "";
-        filterProjects();
+        searchQuery = "";
+        render();
         triggerHaptic("light");
         return;
       }
-      // 4. Reset category filter
-      if (activeCategory && activeCategory !== "all") {
-        activeCategory = "all";
-        updateCategoryChips();
-        filterProjects();
+      // 3. Reset category filter back to "all" (Home)
+      if (selectedCategory && selectedCategory !== "all") {
+        selectedCategory = "all";
+        categoryChips.querySelectorAll(".chip").forEach(el => {
+          el.classList.toggle("is-active", el.dataset.category === "all");
+        });
+        const appsTab = document.getElementById("navTabApps");
+        if (appsTab) {
+          document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("is-active"));
+          appsTab.classList.add("is-active");
+        }
+        render();
         triggerHaptic("light");
         return;
       }
-      // 5. Minimize native app on root screen
-      window.Capacitor.Plugins.App.minimizeApp();
+      // 4. Home Screen Double-Back Exit
+      if (backPressExitTimer) {
+        clearTimeout(backPressExitTimer);
+        backPressExitTimer = null;
+        window.Capacitor.Plugins.App.exitApp();
+      } else {
+        showToast("Press back again to exit");
+        triggerHaptic("medium");
+        backPressExitTimer = setTimeout(() => {
+          backPressExitTimer = null;
+        }, 2000);
+      }
     });
 
     if (window.Capacitor.Plugins.Keyboard) {
@@ -1590,6 +1821,10 @@ function initNativeNavigation() {
   }, { passive: true });
 }
 
+// Initialize all features
+initAmbientShader();
+initMobileNavDock();
+initApkBanner();
 initNativeNavigation();
 
 // Register service worker for PWA / offline support & live updates
