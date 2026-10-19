@@ -88,6 +88,12 @@ const deleteOverlay = $("deleteOverlay");
 const deleteProjectName = $("deleteProjectName");
 
 const toast = $("toast");
+const searchClear = $("searchClear");
+const searchKbd = $("searchKbd");
+const resultCount = $("resultCount");
+const disciplineCount = $("disciplineCount");
+const lastUpdated = $("lastUpdated");
+const emptyReset = $("emptyReset");
 
 const aiAgentOverlay = $("aiAgentOverlay");
 const aiAgentToggleBtn = $("aiAgentToggleBtn");
@@ -114,13 +120,13 @@ function toggleStar(id) {
   let starred = getStarredIds();
   const strId = String(id);
   if (starred.includes(strId)) {
-    starred = starred.filter((s) => s !== strId);
-    showToast("Removed from Favorites");
-  } else {
-    starred.push(strId);
-    showToast("Added to Favorites ⭐");
-    triggerHaptic("success");
-  }
+      starred = starred.filter((s) => s !== strId);
+      showToast("Removed from saved works.");
+    } else {
+      starred.push(strId);
+      showToast("Saved to your collection.");
+      triggerHaptic("success");
+    }
   localStorage.setItem("starred_projects", JSON.stringify(starred));
   updateCategoryFilters();
   render();
@@ -179,20 +185,22 @@ const sortDropdown = $("sortDropdown");
 const sortLabel = $("sortSelectLabel");
 
 const SORT_LABELS = {
-  newest: "✨ Newest First",
-  oldest: "⏳ Oldest First",
-  popular: "🔥 Most Popular",
-  alphabetical: "🔤 Alphabetical (A-Z)",
+  newest: "Newest first",
+  oldest: "Oldest first",
+  popular: "Most visited",
+  alphabetical: "A–Z by title",
 };
 
 function updateSortUI(mode) {
   selectedSortMode = mode;
   localStorage.setItem("sortMode", mode);
-  if (sortLabel) sortLabel.textContent = SORT_LABELS[mode] || "✨ Newest First";
+  if (sortLabel) sortLabel.textContent = SORT_LABELS[mode] || "Newest first";
 
   if (sortDropdown) {
     sortDropdown.querySelectorAll(".custom-select__option").forEach((opt) => {
-      opt.classList.toggle("is-selected", opt.dataset.value === mode);
+      const isMatch = opt.dataset.value === mode;
+      opt.classList.toggle("is-selected", isMatch);
+      opt.setAttribute("aria-selected", String(isMatch));
     });
   }
   render();
@@ -231,11 +239,11 @@ if (sortTrigger && sortDropdown) {
 // Toast
 // ============================================================================
 let toastTimer;
-function showToast(message) {
+function showToast(message, duration = 2600) {
   toast.textContent = message;
   toast.classList.add("is-visible");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2600);
+  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), duration);
 }
 
 // ============================================================================
@@ -331,16 +339,29 @@ function updateCategoryFilters() {
     return a.localeCompare(b);
   });
 
+  const counts = new Map();
+  projects.forEach((p) => {
+    const key = (p.category || "").trim().toLowerCase();
+    if (!key) return;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  });
+
+  const totalVisible = projects.filter(p => isAdmin ? true : !p.hidden).length;
+
+  const starIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z"/></svg>`;
+
   categoryChips.innerHTML = `
-    <button class="chip ${selectedCategory === "all" ? "is-active" : ""}" data-category="all">All</button>
-    <button class="chip chip--favorite ${selectedCategory === "favorites" ? "is-active" : ""}" data-category="favorites">⭐ Favorites (${starredCount})</button>
-    ${categories.map(cat => `
-      <button class="chip ${selectedCategory.toLowerCase() === cat.toLowerCase() ? "is-active" : ""}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
-    `).join("")}
+    <button class="chip ${selectedCategory === "all" ? "is-active" : ""}" data-category="all" type="button">All<span class="chip__count">${totalVisible}</span></button>
+    <button class="chip chip--favorite ${selectedCategory === "favorites" ? "is-active" : ""}" data-category="favorites" type="button">${starIcon}Saved<span class="chip__count">${starredCount}</span></button>
+    ${categories.map(cat => {
+      const count = counts.get(cat.toLowerCase()) || 0;
+      const active = selectedCategory.toLowerCase() === cat.toLowerCase();
+      return `<button class="chip ${active ? "is-active" : ""}" data-category="${escapeAttr(cat)}" type="button">${escapeHtml(cat)}<span class="chip__count">${count}</span></button>`;
+    }).join("")}
   `;
 
   categorySuggestions.innerHTML = categories.map(cat => `
-    <option value="${escapeHtml(cat)}">
+    <option value="${escapeAttr(cat)}">
   `).join("");
 }
 
@@ -354,14 +375,60 @@ categoryChips.addEventListener("click", (e) => {
   categoryChips.querySelectorAll(".chip").forEach(el => {
     el.classList.toggle("is-active", el.dataset.category === selectedCategory);
   });
+  setActiveNavTab(selectedCategory === "favorites" ? "favs" : "apps");
+
+  chip.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   
   render();
 });
 
 searchInput.addEventListener("input", (e) => {
   searchQuery = e.target.value;
+  if (searchClear) searchClear.hidden = !searchQuery;
   render();
 });
+
+if (searchClear) {
+  searchClear.addEventListener("click", () => {
+    searchInput.value = "";
+    searchQuery = "";
+    searchClear.hidden = true;
+    render();
+    searchInput.focus();
+  });
+}
+
+if (emptyReset) {
+  emptyReset.addEventListener("click", () => {
+    searchInput.value = "";
+    searchQuery = "";
+    selectedCategory = "all";
+    if (searchClear) searchClear.hidden = true;
+    updateCategoryFilters();
+    setActiveNavTab("apps");
+    render();
+    searchInput.focus();
+  });
+}
+
+// Footer quick filters
+document.querySelectorAll("[data-jump]").forEach((link) => {
+  link.addEventListener("click", () => {
+    selectedCategory = link.dataset.jump || "all";
+    searchInput.value = "";
+    searchQuery = "";
+    if (searchClear) searchClear.hidden = true;
+    updateCategoryFilters();
+    setActiveNavTab(selectedCategory === "favorites" ? "favs" : "apps");
+    render();
+  });
+});
+
+// Platform-aware search shortcut hint
+if (searchKbd) {
+  const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+  searchKbd.textContent = isApple ? "⌘K" : "Ctrl K";
+}
 
 // ============================================================================
 // Mobile bottom navigation dock
@@ -372,32 +439,7 @@ function setActiveNavTab(tab) {
   });
 }
 
-const navTabs = document.querySelectorAll(".nav-tab");
-navTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    triggerHaptic("light");
-    const target = tab.dataset.tab;
-    setActiveNavTab(target);
-
-    if (target === "apps") {
-      selectedCategory = "all";
-      render();
-    } else if (target === "favs") {
-      selectedCategory = "favorites";
-      render();
-    } else if (target === "search") {
-      searchInput.focus();
-      searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else if (target === "vault") {
-      // Opens the admin login if locked, otherwise the add-project sheet.
-      if (isAdmin) {
-        openProjectModal();
-      } else {
-        openLoginModal();
-      }
-    }
-  });
-});
+// Dock clicks are handled once, in initMobileNavDock().
 
 // ============================================================================
 // Rendering & Sorting
@@ -406,6 +448,22 @@ function escapeHtml(str = "") {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+function escapeAttr(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function formatEntryDate(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
 
 function ensureAbsoluteUrl(url) {
@@ -472,78 +530,112 @@ function render() {
     return 0;
   });
 
-  // Update dynamic collection counter
-  const curationCountEl = document.getElementById("curationCount");
-  if (curationCountEl) {
+  // Update archive colophon
     const totalVisible = projects.filter(p => isAdmin ? true : !p.hidden).length;
-    curationCountEl.textContent = `${filtered.length} / ${totalVisible} Curations`;
-  }
+    const disciplineTotal = new Set(
+      projects
+        .filter(p => isAdmin ? true : !p.hidden)
+        .map(p => (p.category || "").trim().toLowerCase())
+        .filter(Boolean)
+    ).size;
 
-  emptyState.hidden = filtered.length > 0;
+    if (resultCount) resultCount.textContent = String(filtered.length).padStart(2, "0");
 
-  filtered.forEach((p, i) => {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.dataset.id = p.id;
-    card.style.animationDelay = `${Math.min(i * 25, 150)}ms`;
+    const curationCountEl = document.getElementById("curationCount");
+    if (curationCountEl) curationCountEl.textContent = String(totalVisible).padStart(2, "0");
 
-    const showHiddenBadge = isAdmin && p.hidden;
-    const formattedUrl = ensureAbsoluteUrl(p.url);
-    const thumb = thumbnailUrl(p.url);
-    const isStarred = starredIds.includes(String(p.id));
+    if (disciplineCount) disciplineCount.textContent = String(disciplineTotal).padStart(2, "0");
 
-    const isApk = formattedUrl.toLowerCase().endsWith(".apk") || formattedUrl.toLowerCase().includes("releases/download");
-    const ctaLabel = isApk ? "Get APK" : "Launch Web";
-    const ctaIcon = isApk
-      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg>`
-      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>`;
+    if (lastUpdated) {
+      const dated = projects
+        .map(p => new Date(p.created_at || 0))
+        .filter(d => !Number.isNaN(d.getTime()))
+        .sort((a, b) => b - a);
+      lastUpdated.textContent = dated.length ? formatEntryDate(dated[0]) : "—";
+    }
 
-    const badgeLabel = isApk ? "APK // RELEASE" : (p.category ? p.category.toUpperCase() : "WEB APP");
-    const firstChar = escapeHtml((p.title || "P").charAt(0).toUpperCase());
+    emptyState.hidden = filtered.length > 0;
 
-    card.innerHTML = `
-      <div class="card__thumb">
-        <div class="card__thumb-fallback" aria-hidden="true">${firstChar}</div>
-        ${thumb ? `<img class="card__thumb-img" src="${thumb}" alt="${escapeHtml(p.title)}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` : ""}
-        <div class="card__thumb-overlay"></div>
-        <span class="card__category-badge">${escapeHtml(badgeLabel)}</span>
-        <button class="card__bookmark-btn ${isStarred ? 'is-starred' : ''} btn-spring" data-action="star" data-id="${p.id}" aria-label="Favorite ${escapeHtml(p.title)}">
-          <svg viewBox="0 0 24 24" fill="${isStarred ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </button>
-      </div>
-      <div class="card__body">
-        <div class="card__meta">
-          <span class="card__eyebrow">${escapeHtml(p.category || 'Archive')}</span>
-          ${showHiddenBadge ? '<span class="badge badge--hidden">Hidden</span>' : ''}
-        </div>
-        <h3 class="card__title">
-          <a class="card__title-link" href="${escapeHtml(formattedUrl)}" ${isApk ? 'download' : 'target="_blank" rel="noopener noreferrer"'} data-id="${p.id}">${escapeHtml(p.title)}</a>
-        </h3>
-        ${p.description ? `<p class="card__desc">${escapeHtml(p.description)}</p>` : ""}
-        <div class="card__footer">
-          <a class="card__cta btn-spring" href="${escapeHtml(formattedUrl)}" ${isApk ? 'download' : 'target="_blank" rel="noopener noreferrer"'} data-id="${p.id}">
-            <span>${ctaLabel}</span>
-            ${ctaIcon}
+    filtered.forEach((p, i) => {
+      const card = document.createElement("article");
+      const isFeatured = i === 0 && filtered.length > 4;
+      card.className = `card${isFeatured ? " card--feature" : ""}`;
+      card.dataset.id = p.id;
+      card.style.animationDelay = `${Math.min(i * 30, 240)}ms`;
+
+      const showHiddenBadge = isAdmin && p.hidden;
+      const formattedUrl = ensureAbsoluteUrl(p.url);
+      const thumb = thumbnailUrl(p.url);
+      const isStarred = starredIds.includes(String(p.id));
+
+      const isApk = formattedUrl.toLowerCase().endsWith(".apk") || formattedUrl.toLowerCase().includes("releases/download");
+      const linkAttrs = isApk
+        ? "download"
+        : `target="_blank" rel="noopener noreferrer"`;
+      const safeUrl = escapeAttr(formattedUrl);
+      const safeTitle = escapeAttr(p.title || "Untitled");
+      const indexLabel = String(i + 1).padStart(3, "0");
+      const dateLabel = formatEntryDate(p.created_at);
+      const domainLabel = displayUrl(formattedUrl);
+      const firstChar = escapeHtml((p.title || "P").charAt(0).toUpperCase());
+      const categoryLabel = p.category ? p.category : "Archive";
+
+      card.innerHTML = `
+        <div class="card__media">
+          <a class="card__media-link" href="${safeUrl}" ${linkAttrs} data-id="${escapeAttr(p.id)}" aria-label="Open ${safeTitle}">
+            <div class="card__thumb">
+              <span class="card__thumb-fallback" aria-hidden="true">${firstChar}</span>
+              ${thumb ? `<img class="card__thumb-img" src="${escapeAttr(thumb)}" alt="Preview of ${safeTitle}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` : ""}
+              <span class="card__scrim" aria-hidden="true"></span>
+            </div>
           </a>
-          <div class="card__sub-actions">
-            <button class="icon-btn icon-btn--copy btn-spring" data-action="copy" data-url="${escapeHtml(formattedUrl)}" aria-label="Copy URL" title="Copy URL">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="1.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          ${isApk ? '<span class="card__tag">APK</span>' : ""}
+          <div class="card__tools">
+            <button class="icon-btn icon-btn--copy btn-spring" data-action="copy" data-url="${safeUrl}" aria-label="Copy link to ${safeTitle}" title="Copy link" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </button>
             ${isAdmin ? `
-              <button class="icon-btn icon-btn--edit btn-spring" data-action="edit" data-id="${p.id}" aria-label="Edit project" title="Edit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <button class="icon-btn icon-btn--edit btn-spring" data-action="edit" data-id="${escapeAttr(p.id)}" aria-label="Edit ${safeTitle}" title="Edit entry" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
               </button>
-              <button class="icon-btn icon-btn--danger btn-spring" data-action="delete" data-id="${p.id}" data-name="${escapeHtml(p.title)}" aria-label="Move to trash" title="Trash">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <button class="icon-btn icon-btn--danger btn-spring" data-action="delete" data-id="${escapeAttr(p.id)}" data-name="${safeTitle}" aria-label="Move ${safeTitle} to trash" title="Move to trash" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg>
               </button>
-            ` : ''}
+            ` : ""}
           </div>
         </div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
+        <button class="card__bookmark-btn ${isStarred ? "is-starred" : ""} btn-spring" data-action="star" data-id="${escapeAttr(p.id)}" aria-label="${isStarred ? "Remove" : "Save"} ${safeTitle}" aria-pressed="${isStarred}">
+          <svg viewBox="0 0 24 24" fill="${isStarred ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z"/></svg>
+        </button>
+        <div class="card__body">
+          ${isFeatured ? '<span class="card__feature-tag">Featured entry</span>' : ""}
+          <div class="card__meta">
+            <span class="card__index">No. ${indexLabel}</span>
+            <span class="card__meta-dot" aria-hidden="true"></span>
+            <span class="card__eyebrow">${escapeHtml(categoryLabel)}</span>
+            ${showHiddenBadge ? '<span class="badge badge--hidden">Hidden</span>' : ""}
+            <span class="card__date">${escapeHtml(dateLabel)}</span>
+          </div>
+          <h3 class="card__title">
+            <a class="card__title-link" href="${safeUrl}" ${linkAttrs} data-id="${escapeAttr(p.id)}">${escapeHtml(p.title || "Untitled")}</a>
+          </h3>
+          ${p.description ? `<p class="card__desc">${escapeHtml(p.description)}</p>` : ""}
+          <div class="card__footer">
+            <span class="card__domain" title="${escapeAttr(domainLabel)}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 13.5a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+              ${escapeHtml(domainLabel)}
+            </span>
+            <a class="card__cta btn-spring" href="${safeUrl}" ${linkAttrs} data-id="${escapeAttr(p.id)}" aria-label="Open ${safeTitle}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    if (searchClear) searchClear.hidden = !searchQuery;
+  }
 
 function displayUrl(url) {
   try {
@@ -558,7 +650,7 @@ function displayUrl(url) {
 // Card action delegation
 // ============================================================================
 grid.addEventListener("click", (e) => {
-  const btn = e.target.closest(".icon-btn");
+  const btn = e.target.closest("[data-action]");
   const link = e.target.closest("a");
 
   if (btn) {
@@ -656,7 +748,7 @@ function initShakeGesture() {
         if (now - lastShakeTime > 1500) { // 1.5s debounce
           lastShakeTime = now;
           triggerHaptic("heavy");
-          showToast("🔐 Admin Access unlocked!");
+          showToast("Admin access unlocked.");
           openLoginModal();
         }
       }
@@ -894,14 +986,17 @@ $("manageCategoriesBtn").addEventListener("click", () => {
 
 function renderCategoriesOrderList() {
   categoriesOrderList.innerHTML = tempCategories.map((cat, index) => `
-    <li class="category-order-item" style="display: flex; align-items: center; justify-content: space-between; padding: 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-bottom: 6px;">
-      <span style="font-weight: 500; font-size: 0.95rem; color: var(--text-main);">${escapeHtml(cat)}</span>
-      <div style="display: flex; gap: 8px;">
-        <button class="icon-btn category-move-btn" data-direction="up" data-index="${index}" ${index === 0 ? 'disabled style="opacity:0.3; cursor:default;"' : ''} type="button" aria-label="Move Up">
-          ▲
+    <li class="order-item">
+      <span class="order-item__label">
+        <span class="order-item__index">${String(index + 1).padStart(2, "0")}</span>
+        ${escapeHtml(cat)}
+      </span>
+      <div class="order-item__actions">
+        <button class="icon-btn category-move-btn" data-direction="up" data-index="${index}" ${index === 0 ? "disabled" : ""} type="button" aria-label="Move ${escapeAttr(cat)} up">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 19V5m0 0-5 5m5-5 5 5"/></svg>
         </button>
-        <button class="icon-btn category-move-btn" data-direction="down" data-index="${index}" ${index === tempCategories.length - 1 ? 'disabled style="opacity:0.3; cursor:default;"' : ''} type="button" aria-label="Move Down">
-          ▼
+        <button class="icon-btn category-move-btn" data-direction="down" data-index="${index}" ${index === tempCategories.length - 1 ? "disabled" : ""} type="button" aria-label="Move ${escapeAttr(cat)} down">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14m0 0-5-5m5 5 5-5"/></svg>
         </button>
       </div>
     </li>
@@ -966,15 +1061,64 @@ $("categoriesSave").addEventListener("click", async () => {
 });
 
 // ============================================================================
-// Escape key closes any open modal
+// Keyboard: search shortcuts + escape stack
 // ============================================================================
 document.addEventListener("keydown", (e) => {
+  const target = e.target;
+  const isTyping =
+    target &&
+    (target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.tagName === "SELECT" ||
+      target.isContentEditable);
+
+  // ⌘K / Ctrl+K — jump to search from anywhere
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+    return;
+  }
+
+  // "/" — quick search when not already typing
+  if (e.key === "/" && !isTyping && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+    return;
+  }
+
   if (e.key !== "Escape") return;
-  if (!loginOverlay.hidden) closeLoginModal();
-  if (!projectOverlay.hidden) closeProjectModal();
-  if (!deleteOverlay.hidden) closeDeleteModal();
-  if (!categoriesOverlay.hidden) closeCategoriesModal();
-  if (aiAgentOverlay && !aiAgentOverlay.hidden) closeAiAgentModal();
+
+  // Close the topmost layer first
+  if (!loginOverlay.hidden) return closeLoginModal();
+  if (!projectOverlay.hidden) return closeProjectModal();
+  if (!deleteOverlay.hidden) return closeDeleteModal();
+  if (!categoriesOverlay.hidden) return closeCategoriesModal();
+  if (aiAgentOverlay && !aiAgentOverlay.hidden) return closeAiAgentModal();
+  if (contextMenuOverlay && !contextMenuOverlay.hidden) return closeContextMenu();
+  if (cardDetailOverlay && !cardDetailOverlay.hidden) return closeCardDetailModal();
+  if (trashOverlay && !trashOverlay.hidden) return closeTrashModal();
+  if (updateOverlay && !updateOverlay.hidden) return closeUpdateModal();
+
+  if (sortTrigger && sortDropdown && !sortDropdown.hidden) {
+    sortTrigger.setAttribute("aria-expanded", "false");
+    sortDropdown.hidden = true;
+    sortTrigger.focus();
+    return;
+  }
+
+  // Finally: clear search, then blur
+  if (document.activeElement === searchInput) {
+    if (searchInput.value) {
+      searchInput.value = "";
+      searchQuery = "";
+      if (searchClear) searchClear.hidden = true;
+      render();
+    } else {
+      searchInput.blur();
+    }
+  }
 });
 
 // ============================================================================
@@ -1046,10 +1190,10 @@ async function sendAiCommand(cmdText) {
   triggerHaptic("light");
 
   const loadingMsg = document.createElement("div");
-  loadingMsg.className = "ai-msg ai-msg--agent";
-  loadingMsg.textContent = "🤖 Processing your request...";
-  aiChatContainer.appendChild(loadingMsg);
-  aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+    loadingMsg.className = "ai-msg ai-msg--agent";
+    loadingMsg.textContent = "Raven is working…";
+    aiChatContainer.appendChild(loadingMsg);
+    aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/ai/command`, {
@@ -1079,49 +1223,52 @@ async function sendAiCommand(cmdText) {
   } catch (err) {
     console.error(err);
     if (loadingMsg.parentNode) aiChatContainer.removeChild(loadingMsg);
-    appendAiMessage("❌ Sorry, failed to process request. Please try again.");
-    triggerHaptic("heavy");
-  }
-}
+    appendAiMessage("I couldn't complete that request. Please try again.");
+        triggerHaptic("heavy");
+      }
+    }
 
-function appendAiConfirmationCard(pending) {
-  const card = document.createElement("div");
-  card.className = "ai-confirm-card";
-  card.id = `pendingCard_${pending.pendingId}`;
-  card.innerHTML = `
-    <div class="ai-confirm-card__title">🛡️ Proposed Database Changes</div>
-    <div class="ai-confirm-card__summary">${escapeHtml(pending.summary)}</div>
-    <div class="ai-confirm-actions">
-      <button class="btn--confirm" onclick="window.confirmAiAction('${pending.pendingId}', true)">✅ Confirm & Execute</button>
-      <button class="btn--deny" onclick="window.confirmAiAction('${pending.pendingId}', false)">❌ Cancel</button>
-    </div>
-  `;
-  aiChatContainer.appendChild(card);
-  aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
-}
+    function appendAiConfirmationCard(pending) {
+      const card = document.createElement("div");
+      card.className = "ai-confirm-card";
+      card.id = `pendingCard_${pending.pendingId}`;
+      card.innerHTML = `
+        <div class="ai-confirm-card__title">Proposed archive changes</div>
+        <div class="ai-confirm-card__summary">${escapeHtml(pending.summary)}</div>
+        <div class="ai-confirm-actions">
+          <button class="btn--confirm" onclick="window.confirmAiAction('${pending.pendingId}', true)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            Approve &amp; run
+          </button>
+          <button class="btn--deny" onclick="window.confirmAiAction('${pending.pendingId}', false)">Discard</button>
+        </div>
+      `;
+      aiChatContainer.appendChild(card);
+      aiChatContainer.scrollTop = aiChatContainer.scrollHeight;
+    }
 
-window.confirmAiAction = async function (pendingId, isApproved) {
-  const card = document.getElementById(`pendingCard_${pendingId}`);
-  if (card) {
-    card.innerHTML = `<div class="ai-confirm-card__summary">${isApproved ? '⏳ Executing changes...' : '❌ Cancelled.'}</div>`;
-  }
+    window.confirmAiAction = async function (pendingId, isApproved) {
+      const card = document.getElementById(`pendingCard_${pendingId}`);
+      if (card) {
+        card.innerHTML = `<div class="ai-confirm-card__summary">${isApproved ? "Applying changes…" : "Change discarded."}</div>`;
+      }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/ai/confirm`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pendingId, confirm: isApproved }),
-    });
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/ai/confirm`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pendingId, confirm: isApproved }),
+        });
 
-    const data = await res.json();
-    appendAiMessage(data.reply || (isApproved ? "✅ Actions executed!" : "❌ Cancelled."));
-    triggerHaptic(isApproved ? "success" : "light");
-    await loadProjects();
-  } catch (err) {
-    console.error(err);
-    appendAiMessage("❌ Failed to process confirmation.");
-  }
-};
+        const data = await res.json();
+        appendAiMessage(data.reply || (isApproved ? "Changes applied." : "Change discarded."));
+        triggerHaptic(isApproved ? "success" : "light");
+        await loadProjects();
+      } catch (err) {
+        console.error(err);
+        appendAiMessage("I couldn't confirm that change. Please try again.");
+      }
+    };
 
 if (aiAgentForm) {
   aiAgentForm.addEventListener("submit", (e) => {
@@ -1154,7 +1301,7 @@ if (SpeechRecognition) {
   recognition.onstart = () => {
     triggerHaptic("medium");
     if (aiVoiceBtn) aiVoiceBtn.classList.add("is-listening");
-    showToast("🎙️ Listening to voice command...");
+    showToast("Listening…");
   };
 
   recognition.onresult = (event) => {
@@ -1230,7 +1377,7 @@ if (trashOverlay) {
 
 async function loadDeletedProjects() {
   if (!trashListContainer) return;
-  trashListContainer.innerHTML = `<p class="modal__body">Loading deleted projects...</p>`;
+  trashListContainer.innerHTML = `<p class="modal__lede">Loading deleted entries…</p>`;
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/projects/deleted?isAdmin=${isAdmin}`);
@@ -1238,7 +1385,14 @@ async function loadDeletedProjects() {
     const list = data.deletedProjects || [];
 
     if (list.length === 0) {
-      trashListContainer.innerHTML = `<p class="modal__body" style="text-align: center; color: var(--text-tertiary);">✨ Trash bin is empty! No deleted projects.</p>`;
+      trashListContainer.innerHTML = `
+        <div class="trash-empty">
+          <span class="trash-empty__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg>
+          </span>
+          <p>Nothing in the recovery bin.</p>
+        </div>
+      `;
       return;
     }
 
@@ -1248,16 +1402,19 @@ async function loadDeletedProjects() {
       <div class="trash-item">
         <div class="trash-item__info">
           <div class="trash-item__title">${escapeHtml(p.title)}</div>
-          <div class="trash-item__meta">Category: ${escapeHtml(p.category || "General")} • Deleted ${p.deleted_at ? new Date(p.deleted_at).toLocaleDateString() : "recently"}</div>
+          <div class="trash-item__meta">${escapeHtml(p.category || "General")} · deleted ${p.deleted_at ? new Date(p.deleted_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "recently"}</div>
         </div>
-        <button class="btn--restore" onclick="window.restoreProject('${p.id}')">♻️ Restore</button>
+        <button class="btn--restore" onclick="window.restoreProject('${escapeAttr(p.id)}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v5h5"/></svg>
+          Restore
+        </button>
       </div>
     `
       )
       .join("");
   } catch (err) {
     console.error(err);
-    trashListContainer.innerHTML = `<p class="modal__body" style="color: #ff4757;">Failed to load trash bin.</p>`;
+    trashListContainer.innerHTML = `<p class="modal__lede" style="color: var(--danger);">Could not load the recovery bin.</p>`;
   }
 }
 
@@ -1265,14 +1422,14 @@ window.restoreProject = async function (id) {
   try {
     const res = await fetch(`${API_BASE_URL}/api/projects/${id}/restore`, { method: "POST" });
     if (res.ok) {
-      showToast("♻️ Project restored!");
+      showToast("Entry restored to the archive.");
       triggerHaptic("success");
       await loadDeletedProjects();
       await loadProjects();
     }
   } catch (err) {
     console.error(err);
-    showToast("Failed to restore project.");
+    showToast("Could not restore that entry.");
   }
 };
 
@@ -1414,7 +1571,7 @@ if (refreshBtn) {
 
     setTimeout(() => {
       if (icon) icon.classList.remove("is-spinning");
-      showToast("✨ Archive refreshed");
+      showToast("Archive refreshed.");
     }, 400);
   });
 }
@@ -1502,9 +1659,18 @@ function openCardDetailModal(project) {
   $("detailCategory").textContent = project.category || "General";
   $("cardDetailTitle").textContent = project.title || "";
   $("detailDesc").textContent = project.description || "No description provided.";
+
+  const dateEl = $("detailDate");
+  if (dateEl) dateEl.textContent = formatEntryDate(project.created_at);
+
+  const clicksEl = $("detailClicks");
+  if (clicksEl) {
+    const clicks = Number(project.clicks) || 0;
+    clicksEl.textContent = clicks === 1 ? "1 visit" : `${clicks} visits`;
+  }
   
   const urlBtn = $("detailUrlBtn");
-  if (urlBtn) urlBtn.href = project.url || "#";
+  if (urlBtn) urlBtn.href = ensureAbsoluteUrl(project.url) || "#";
 
   cardDetailOverlay.hidden = false;
   cardDetailOverlay.removeAttribute("hidden");
@@ -1740,7 +1906,7 @@ function initMobileNavDock() {
     } else if (tabName === "vault") {
       if (isAdmin) {
         adminToolbar.scrollIntoView({ behavior: "smooth", block: "center" });
-        showToast("Admin session active 🛡️");
+        showToast("Admin session active.");
       } else {
         loginOverlay.hidden = false;
         loginOverlay.classList.add("is-visible");
@@ -1873,7 +2039,7 @@ if ("serviceWorker" in navigator) {
         if (!newWorker) return;
         newWorker.addEventListener("statechange", () => {
           if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-            showToast("✨ New web update ready. Tap to refresh!", 6000);
+            showToast("A new version is ready — reload to update.", 6000);
           }
         });
       });

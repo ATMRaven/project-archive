@@ -2,30 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Selected Work — Project Archive</title>
-<meta name="description" content="A curated archive of projects.">
+<meta name="description" content="A curated atelier of visionary digital products, experimental physics, and verified software releases.">
 
 <!-- PWA -->
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0a0a0b">
+<meta name="theme-color" content="#0a0908" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f0e7" media="(prefers-color-scheme: light)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
 
-<!-- Fonts: Playfair Display (editorial serif) + Plus Jakarta Sans (interface) + JetBrains Mono (utility) -->
+<!-- Type: Fraunces (editorial display) · Inter Tight (Swiss interface) · IBM Plex Mono (archive codes) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- WebGL Luxury Fluid Background Layer -->
+<a class="skip-link" href="#collection">Skip to collection</a>
+
+<!-- Ambient atelier atmosphere -->
 <div class="ambient-layer" aria-hidden="true">
   <canvas id="ambientShaderCanvas" class="ambient-canvas"></canvas>
+  <div class="ambient-glow ambient-glow--gold"></div>
+  <div class="ambient-glow ambient-glow--warm"></div>
   <div class="ambient-vignette"></div>
   <div class="ambient-grain"></div>
 </div>
@@ -33,158 +38,241 @@
 <!-- Admin session bar -->
 <div class="admin-bar" id="adminBar" hidden>
   <span class="admin-bar__dot" aria-hidden="true"></span>
-  <span class="admin-bar__label">Admin session active</span>
+  <span class="admin-bar__label"><span class="admin-bar__prefix">Atelier console · </span>Admin session active</span>
   <button class="admin-bar__logout" id="logoutBtn" type="button">Log out</button>
 </div>
 
 <header class="site-header">
   <div class="wrap">
-    <div class="site-header__top">
-      <div class="site-header__brand">
-        <img class="site-logo" src="/icons/icon-192.png" alt="Raven Logo" style="width: 48px; height: 48px; object-fit: contain;">
-        <div class="brand-headings">
-          <p class="eyebrow">Project Archive</p>
-          <span class="collection-badge"><span class="collection-dot"></span><span id="curationCount">42 Curations</span></span>
-        </div>
-      </div>
-      <div class="header-actions">
+    <div class="masthead">
+      <a class="brand" href="/" aria-label="Selected Work — archive home">
+        <span class="brand__mark">
+          <img class="site-logo" src="/icons/icon-192.png" alt="" width="34" height="34">
+        </span>
+        <span class="brand__text">
+          <span class="brand__name">Selected Work</span>
+          <span class="brand__sub">Project Archive</span>
+        </span>
+      </a>
+
+      <div class="masthead__side">
+        <span class="masthead__issue">Issue 08 · MMXXVI</span>
+        <span class="masthead__divider" aria-hidden="true"></span>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
-          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5V5M12 19v2.5M4.2 4.2 6 6M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8 6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M12 2.5V5M12 19v2.5M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12H5M19 12h2.5M4.6 19.4 6 18M18 6l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
         </button>
       </div>
     </div>
-    <div class="site-header__hero">
-      <h1 class="site-title">Selected&nbsp;Work</h1>
-      <p class="site-subtitle">A curated atelier of visionary digital products, experimental physics, and verified software releases.</p>
+
+    <div class="hero">
+      <div class="hero__lead">
+              <div class="hero__kicker">
+                <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>Curated digital artefacts</p>
+              </div>
+              <h1 class="hero__title">Selected <em>Work</em></h1>
+              <p class="hero__desc">A curated atelier of visionary digital products, experimental physics, and verified software releases — assembled by hand, one entry at a time.</p>
+            </div>
+
+      <aside class="hero__folio" aria-label="Collection summary">
+        <p class="folio__label">Colophon</p>
+        <dl class="folio">
+          <div class="folio__row">
+            <dt>Entries</dt>
+            <dd id="curationCount">—</dd>
+          </div>
+          <div class="folio__row">
+            <dt>Disciplines</dt>
+            <dd id="disciplineCount">—</dd>
+          </div>
+          <div class="folio__row">
+            <dt>Last entry</dt>
+            <dd id="lastUpdated">—</dd>
+          </div>
+        </dl>
+              </aside>
     </div>
 
-    <!-- Responsive APK Download Banner for Web Visitors (Hidden in native APK) -->
-    <div class="apk-banner" id="apkDownloadBanner" hidden>
-      <div class="apk-banner__lead">
-        <div class="apk-banner__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m0 0-4-4m4 4 4-4M5 21h14"/></svg>
-        </div>
-        <div class="apk-banner__info">
-          <span class="apk-banner__title">Install Selected Work for Android</span>
-          <span class="apk-banner__desc">Experience native 120fps physics, gesture back-navigation & offline library</span>
-        </div>
+    </div>
       </div>
-      <a class="apk-banner__btn btn-spring" href="https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk" download>
-        <span>Get APK</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg>
-      </a>
+    </header>
+
+    <main class="wrap" id="collection">
+  <div class="collection-head">
+    <div>
+      <p class="eyebrow eyebrow--muted">The Collection</p>
+      <h2 class="section-title">Archive Index</h2>
+    </div>
+    <p class="collection-head__meta"><span id="resultCount">—</span><span class="collection-head__sep" aria-hidden="true">/</span><span>entries in view</span></p>
+  </div>
+
+  <div class="browse">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.2-4.2"/></svg>
+      <input type="text" id="searchInput" placeholder="Search the archive…" aria-label="Search projects" autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+      <kbd class="search-kbd" id="searchKbd" aria-hidden="true">⌘K</kbd>
     </div>
 
-    <div class="hairline" aria-hidden="true"></div>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="toolbar">
-    <div class="toolbar__left">
-      <div class="view-toggles" id="viewToggles">
-        <button class="view-btn is-active" data-view="grid" aria-label="Grid view" title="Grid">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <div class="browse__controls">
+      <div class="view-toggles" id="viewToggles" role="group" aria-label="View mode">
+        <button class="view-btn is-active" data-view="grid" type="button" aria-label="Gallery view" title="Gallery" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg>
         </button>
-        <button class="view-btn" data-view="minimal" aria-label="Minimal view" title="Minimal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <button class="view-btn" data-view="minimal" type="button" aria-label="Ledger view" title="Ledger" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h10"/></svg>
         </button>
       </div>
 
       <div class="custom-select" id="sortCustomSelect">
-        <button class="custom-select__trigger" id="sortSelectTrigger" type="button" aria-expanded="false" aria-haspopup="listbox">
-          <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
-          <span class="custom-select__label" id="sortSelectLabel">✨ Newest First</span>
-          <svg class="custom-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        <button class="custom-select__trigger" id="sortSelectTrigger" type="button" aria-expanded="false" aria-haspopup="listbox" aria-label="Sort collection">
+          <svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 4v16m0 0-3-3m3 3 3-3M17 20V4m0 0-3 3m3-3 3 3"/></svg>
+          <span class="custom-select__label" id="sortSelectLabel">Newest first</span>
+          <svg class="custom-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </button>
-        <div class="custom-select__dropdown" id="sortDropdown" role="listbox" hidden>
-          <button class="custom-select__option is-selected" data-value="newest" role="option" type="button">
-            <span class="option-icon">✨</span>
-            <span class="option-label">Newest First</span>
-            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+        <div class="custom-select__dropdown" id="sortDropdown" role="listbox" aria-label="Sort order" hidden>
+          <button class="custom-select__option is-selected" data-value="newest" role="option" aria-selected="true" type="button">
+            <span class="option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+            <span class="option-label">Newest first</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
           </button>
-          <button class="custom-select__option" data-value="oldest" role="option" type="button">
-            <span class="option-icon">⏳</span>
-            <span class="option-label">Oldest First</span>
-            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          <button class="custom-select__option" data-value="oldest" role="option" aria-selected="false" type="button">
+            <span class="option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v5h5"/><path d="M12 7.5V12l3 2"/></svg></span>
+            <span class="option-label">Oldest first</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
           </button>
-          <button class="custom-select__option" data-value="popular" role="option" type="button">
-            <span class="option-icon">🔥</span>
-            <span class="option-label">Most Popular</span>
-            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          <button class="custom-select__option" data-value="popular" role="option" aria-selected="false" type="button">
+            <span class="option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3.5 16.5 5.5-6 4 4 7-8"/><path d="M15.5 6.5H20v4.5"/></svg></span>
+            <span class="option-label">Most visited</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
           </button>
-          <button class="custom-select__option" data-value="alphabetical" role="option" type="button">
-            <span class="option-icon">🔤</span>
-            <span class="option-label">Alphabetical (A-Z)</span>
-            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+          <button class="custom-select__option" data-value="alphabetical" role="option" aria-selected="false" type="button">
+            <span class="option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18 8.5 6 13 18M5.6 14h5.8M16 11h5M16 18l5-7h-5"/></svg></span>
+            <span class="option-label">A–Z by title</span>
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
           </button>
         </div>
       </div>
 
-      <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh Archive" title="Refresh projects">
-        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21.5 2v6h-6M2.5 22v-6h6"/>
-          <path d="M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.3L2.5 16"/>
+      <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh collection" title="Refresh">
+        <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M20.5 3v5.5H15"/>
+          <path d="M3.5 12a8.5 8.5 0 0 1 14.6-5.9L20.5 8.5M20.5 12a8.5 8.5 0 0 1-14.6 5.9L3.5 15.5"/>
         </svg>
-    </div>
+      </button>
+
+  </div>
 
     <div class="admin-toolbar" id="adminToolbar" hidden>
-      <button class="btn btn--primary" id="addProjectBtn" type="button">+ Add project</button>
+      <button class="btn btn--primary btn--add" id="addProjectBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="btn-label-desktop">New entry</span>
+        <span class="btn-label-mobile">New</span>
+      </button>
       <div class="admin-toolbar__secondary">
-        <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" title="Reorder Categories">
-          <span class="btn-label-desktop">Reorder Categories</span>
-          <span class="btn-label-mobile">Reorder</span>
+        <button class="btn btn--ghost" id="manageCategoriesBtn" type="button" title="Reorder categories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h10M4 12h16M4 17h7"/><path d="m17 5 3 2-3 2"/></svg>
+          <span class="btn-label-desktop">Order</span>
+          <span class="btn-label-mobile">Order</span>
         </button>
-        <button class="btn btn--ai" id="aiAgentToggleBtn" type="button" title="AI Assistant">
-          <span class="btn-label-desktop">🤖 AI Assistant</span>
-          <span class="btn-label-mobile">🤖 AI Assistant</span>
+        <button class="btn btn--ghost" id="aiAgentToggleBtn" type="button" title="Raven AI assistant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3.5l1.7 4.6 4.8 1.7-4.8 1.7L12 16.1l-1.7-4.6L5.5 9.8l4.8-1.7L12 3.5Z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>
+          <span class="btn-label-desktop">Raven AI</span>
+          <span class="btn-label-mobile">AI</span>
         </button>
-        <button class="btn btn--ghost" id="trashBtn" type="button" title="Trash Bin">
-          <span class="btn-label-desktop">🗑️ Trash Bin</span>
-          <span class="btn-label-mobile">🗑️ Trash</span>
+        <button class="btn btn--ghost" id="trashBtn" type="button" title="Recently deleted">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg>
+          <span class="btn-label-desktop">Trash</span>
+          <span class="btn-label-mobile">Trash</span>
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Search & Category Filters -->
-  <div class="filter-bar">
-    <div class="search-box">
-      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="searchInput" placeholder="Search projects by name, description, or tag..." aria-label="Search projects">
-    </div>
-    <div class="category-chips" id="categoryChips">
-      <!-- Generated dynamically -->
+    <div class="filter-rail">
+      <span class="filter-rail__label" aria-hidden="true">Index</span>
+      <div class="category-chips" id="categoryChips" role="group" aria-label="Filter by category">
+        <!-- Generated dynamically -->
+      </div>
     </div>
   </div>
 
   <section id="grid" class="grid" data-view="grid" aria-live="polite"></section>
 
-  <p id="emptyState" class="empty-state" hidden>Nothing matches your search or selected category.</p>
-</main>
+  <div id="emptyState" class="empty-state" hidden>
+    <span class="empty-state__mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.2-4.2"/></svg>
+    </span>
+    <p class="empty-state__title">No matching entries</p>
+    <p class="empty-state__desc">No work in the archive matches that search or discipline. Try a broader term, or return to the complete index.</p>
+    <button class="btn btn--ghost" id="emptyReset" type="button">Clear search &amp; filters</button>
+      </div>
+
+      <!-- Native edition -->
+      <div class="edition-strip" id="apkDownloadBanner" hidden>
+        <div class="edition-strip__lead">
+          <span class="edition-strip__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+          </span>
+          <div class="edition-strip__copy">
+            <p class="edition-strip__title">Native edition for Android</p>
+            <p class="edition-strip__desc">120fps motion, gesture navigation, and the full archive available offline.</p>
+          </div>
+        </div>
+        <a class="edition-strip__link btn-spring" href="https://github.com/ATMRaven/project-archive/releases/latest/download/project-archive.apk" download>
+          <span>Install APK</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg>
+        </a>
+      </div>
+    </main>
 
 <footer class="site-footer">
   <div class="wrap">
-    <p class="site-footer__text"><a href="/ping" id="pingSecretTrigger" class="ping-secret-trigger">Built</a> and maintained by hand by A.T.M.R.<span id="secretTrigger" class="secret-trigger"></span></p>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <p class="footer-wordmark">Selected <em>Work</em></p>
+        <p class="footer-desc">An independent archive of shipped products and speculative experiments. Catalogued by hand, presented without noise.</p>
+      </div>
+
+      <nav class="footer-col" aria-label="Archive sections">
+        <p class="footer-label">Index</p>
+        <a href="#collection">The collection</a>
+        <a href="#collection" data-jump="favorites">Saved works</a>
+        <a href="#collection" data-jump="all">Full archive</a>
+      </nav>
+
+      <div class="footer-col">
+        <p class="footer-label">Colophon</p>
+        <p class="footer-note">Set in Fraunces &amp; Inter Tight.<br>Archive codes in IBM Plex Mono.<br>Built for screen and pocket.</p>
+      </div>
+    </div>
+
+    <div class="footer-base">
+      <p class="footer-credit"><a href="/ping" id="pingSecretTrigger" class="ping-secret-trigger">Built</a> and maintained by hand by A.T.M.R.<span id="secretTrigger" class="secret-trigger"></span></p>
+      <p class="footer-copyright">© MMXXVI · All rights reserved</p>
+    </div>
   </div>
 </footer>
 
 <!-- Login Modal -->
 <div class="modal-overlay" id="loginOverlay" hidden>
   <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-    <button class="modal__close" id="loginClose" type="button" aria-label="Close">&times;</button>
+    <button class="modal__close" id="loginClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
     <p class="eyebrow eyebrow--modal">Restricted</p>
-    <h2 id="loginTitle" class="modal__title">Admin Access</h2>
+    <h2 id="loginTitle" class="modal__title">Atelier access</h2>
+    <p class="modal__lede">Staff only. Enter the passphrase to unlock the editing console.</p>
     <form id="loginForm" class="form" novalidate>
       <label class="field">
-        <span class="field__label">Password</span>
-        <input class="field__input" type="password" id="passwordInput" autocomplete="current-password" required>
+        <span class="field__label">Passphrase</span>
+        <input class="field__input" type="password" id="passwordInput" autocomplete="current-password" placeholder="••••••••" required>
       </label>
-      <p class="field__error" id="loginError" hidden>Incorrect password. Try again.</p>
+      <p class="field__error" id="loginError" hidden>Incorrect passphrase. Try again.</p>
       <div class="form__actions">
         <button type="button" class="btn btn--ghost" id="loginCancel">Cancel</button>
-        <button type="submit" class="btn btn--primary">Enter</button>
+        <button type="submit" class="btn btn--primary">Unlock</button>
       </div>
     </form>
   </div>
@@ -193,37 +281,39 @@
 <!-- Add / Edit Project Modal -->
 <div class="modal-overlay" id="projectOverlay" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
-    <button class="modal__close" id="projectClose" type="button" aria-label="Close">&times;</button>
-    <p class="eyebrow eyebrow--modal" id="projectEyebrow">New Entry</p>
-    <h2 id="projectModalTitle" class="modal__title">Add Project</h2>
+    <button class="modal__close" id="projectClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <p class="eyebrow eyebrow--modal" id="projectEyebrow">New entry</p>
+    <h2 id="projectModalTitle" class="modal__title">Add project</h2>
     <form id="projectForm" class="form" novalidate>
       <input type="hidden" id="projectId">
       <label class="field">
         <span class="field__label">Title</span>
-        <input class="field__input" type="text" id="titleInput" required maxlength="120">
+        <input class="field__input" type="text" id="titleInput" required maxlength="120" placeholder="Name of the work">
       </label>
       <label class="field">
         <span class="field__label">Description</span>
-        <textarea class="field__input field__input--area" id="descriptionInput" rows="3" maxlength="280"></textarea>
+        <textarea class="field__input field__input--area" id="descriptionInput" rows="3" maxlength="280" placeholder="One or two lines of context"></textarea>
       </label>
       <label class="field">
         <span class="field__label">URL</span>
         <input class="field__input field__input--mono" type="url" id="urlInput" placeholder="https://" required>
       </label>
       <label class="field">
-        <span class="field__label">Category / Tag</span>
+        <span class="field__label">Category / discipline</span>
         <input class="field__input" type="text" id="categoryInput" placeholder="e.g. Web App, CLI, Design" list="categorySuggestions" maxlength="40">
         <datalist id="categorySuggestions"></datalist>
       </label>
       <label class="field field--row">
-        <span class="field__label">Hidden from public view</span>
-        <button type="button" class="switch" id="hiddenSwitch" role="switch" aria-checked="false">
+        <span class="field__label">Keep out of the public index</span>
+        <button type="button" class="switch" id="hiddenSwitch" role="switch" aria-checked="false" aria-label="Hidden from public view">
           <span class="switch__thumb"></span>
         </button>
       </label>
       <div class="form__actions">
         <button type="button" class="btn btn--ghost" id="projectCancel">Cancel</button>
-        <button type="submit" class="btn btn--primary" id="projectSubmit">Save project</button>
+        <button type="submit" class="btn btn--primary" id="projectSubmit">Save entry</button>
       </div>
     </form>
   </div>
@@ -232,18 +322,18 @@
 <!-- Reorder Categories Modal -->
 <div class="modal-overlay" id="categoriesOverlay" hidden>
   <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="categoriesTitle">
-    <button class="modal__close" id="categoriesClose" type="button" aria-label="Close">&times;</button>
+    <button class="modal__close" id="categoriesClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
     <p class="eyebrow eyebrow--modal">Admin</p>
-    <h2 id="categoriesTitle" class="modal__title">Reorder Categories</h2>
-    <div style="margin: 20px 0;">
-      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px; line-height: 1.4;">Prioritize categories. Items at the top will be shown first in navigation.</p>
-      <ul id="categoriesOrderList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
-        <!-- Populated dynamically -->
-      </ul>
-    </div>
+    <h2 id="categoriesTitle" class="modal__title">Category order</h2>
+    <p class="modal__lede">Higher categories appear first in the index rail. Drag-free ordering — use the arrows.</p>
+    <ul id="categoriesOrderList" class="order-list">
+      <!-- Populated dynamically -->
+    </ul>
     <div class="form__actions">
       <button type="button" class="btn btn--ghost" id="categoriesCancel">Cancel</button>
-      <button type="button" class="btn btn--primary" id="categoriesSave">Save Order</button>
+      <button type="button" class="btn btn--primary" id="categoriesSave">Save order</button>
     </div>
   </div>
 </div>
@@ -251,91 +341,109 @@
 <!-- Delete confirmation -->
 <div class="modal-overlay" id="deleteOverlay" hidden>
   <div class="modal modal--sm" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
-    <button class="modal__close" id="deleteClose" type="button" aria-label="Close">&times;</button>
+    <button class="modal__close" id="deleteClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
     <p class="eyebrow eyebrow--modal">Confirm</p>
-    <h2 id="deleteTitle" class="modal__title">Delete this project?</h2>
-    <p class="modal__body">This can't be undone. <strong id="deleteProjectName"></strong> will be removed from the archive.</p>
+    <h2 id="deleteTitle" class="modal__title">Move to trash?</h2>
+    <p class="modal__body">This entry can be restored from the recovery bin. <strong id="deleteProjectName"></strong> will leave the public index.</p>
     <div class="form__actions">
       <button type="button" class="btn btn--ghost" id="deleteCancel">Cancel</button>
-      <button type="button" class="btn btn--danger" id="deleteConfirm">Delete</button>
+      <button type="button" class="btn btn--danger" id="deleteConfirm">Move to trash</button>
     </div>
   </div>
 </div>
 
-<!-- 100% Free AI Admin Assistant Modal Drawer -->
+<!-- AI Admin Assistant -->
 <div class="modal-overlay" id="aiAgentOverlay" hidden>
   <div class="modal modal--ai" role="dialog" aria-modal="true" aria-labelledby="aiAgentTitle">
-    <button class="modal__close" id="aiAgentClose" type="button" aria-label="Close">&times;</button>
+    <button class="modal__close" id="aiAgentClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+
     <div class="ai-header">
-      <div class="ai-avatar">🤖</div>
-      <div>
-        <p class="eyebrow eyebrow--modal">100% Free AI Admin Agent</p>
-        <h2 id="aiAgentTitle" class="modal__title">Raven AI Assistant</h2>
+      <span class="ai-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3.5l1.7 4.6 4.8 1.7-4.8 1.7L12 16.1l-1.7-4.6L5.5 9.8l4.8-1.7L12 3.5Z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>
+      </span>
+      <div class="ai-header__copy">
+        <p class="eyebrow eyebrow--modal">Workers AI · free tier</p>
+        <h2 id="aiAgentTitle" class="modal__title">Raven, archive assistant</h2>
       </div>
+      <span class="ai-status"><span class="ai-status__dot"></span>Ready</span>
     </div>
 
-    <!-- Chat Messages Scroll Container -->
-    <div class="ai-chat" id="aiChatContainer">
+    <div class="ai-chat" id="aiChatContainer" aria-live="polite">
       <div class="ai-msg ai-msg--agent">
-        👋 Hi Admin! I'm your free AI assistant powered by Cloudflare Workers AI.
-        <br><br>
-        Tell or speak to me what to do:
+        <p class="ai-msg__intro">Good to see you. I can edit the archive on your behalf — add, hide, reorder, delete, or sort entries.</p>
+        <p class="ai-msg__label">Example commands</p>
         <ul>
-          <li><em>"Add https://github.com/vitejs/vite under Web Tools"</em></li>
-          <li><em>"Hide all projects in Experiments category"</em></li>
-          <li><em>"Delete the test project"</em></li>
-          <li><em>"Sort by most popular"</em></li>
+          <li>Add https://github.com/vitejs/vite under Web Tools</li>
+          <li>Hide every project in Experiments</li>
+          <li>Move the test project to trash</li>
+          <li>Sort the archive by most visited</li>
         </ul>
       </div>
     </div>
 
-    <!-- Suggested Quick Action Chips -->
     <div class="ai-chips" id="aiChips">
-      <button class="ai-chip" data-cmd="Add https://github.com/facebook/react under Web Tools">➕ Add React URL</button>
-      <button class="ai-chip" data-cmd="Sort archive by most popular">🔥 Sort Popular</button>
-      <button class="ai-chip" data-cmd="Show all hidden projects">👁️ Unhide All</button>
+      <button class="ai-chip" data-cmd="Add https://github.com/facebook/react under Web Tools" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Add a URL
+      </button>
+      <button class="ai-chip" data-cmd="Sort archive by most popular" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3.5 16.5 5.5-6 4 4 7-8"/><path d="M15.5 6.5H20v4.5"/></svg>
+        Sort by visits
+      </button>
+      <button class="ai-chip" data-cmd="Show all hidden projects" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        Unhide all
+      </button>
     </div>
 
-    <!-- Command Input Bar with Mic Voice Button -->
     <form id="aiAgentForm" class="ai-input-bar">
-      <button type="button" class="ai-mic-btn" id="aiVoiceBtn" title="Voice command input" aria-label="Voice input">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      <button type="button" class="ai-mic-btn" id="aiVoiceBtn" title="Voice command" aria-label="Voice input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M9 21.5h6"/></svg>
       </button>
-      <input class="ai-input" type="text" id="aiCommandInput" placeholder="Speak or type an admin command..." required autocomplete="off">
-      <button type="submit" class="btn btn--primary ai-send-btn" id="aiSendBtn">Send</button>
+      <input class="ai-input" type="text" id="aiCommandInput" placeholder="Describe an archive change…" required autocomplete="off">
+      <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="Send command">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+      </button>
     </form>
   </div>
 </div>
 
-<!-- Recently Deleted Trash Bin Modal -->
+<!-- Trash Bin -->
 <div class="modal-overlay" id="trashOverlay" hidden>
   <div class="modal modal--md" role="dialog" aria-modal="true" aria-labelledby="trashTitle">
-    <button class="modal__close" id="trashClose" type="button" aria-label="Close">&times;</button>
-    <p class="eyebrow eyebrow--modal">Recovery Bin</p>
-    <h2 id="trashTitle" class="modal__title">🗑️ Recently Deleted Projects</h2>
-    <p class="modal__body">Revive soft-deleted items back into your active archive list at any time.</p>
-    
+    <button class="modal__close" id="trashClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <p class="eyebrow eyebrow--modal">Recovery bin</p>
+    <h2 id="trashTitle" class="modal__title">Recently deleted</h2>
+    <p class="modal__lede">Deleted entries rest here. Restore one to return it to the active index.</p>
     <div class="trash-list" id="trashListContainer">
-      <!-- Dynamically populated trash items -->
+      <!-- Dynamically populated -->
     </div>
   </div>
 </div>
 
-<!-- Mobile & Web In-App Update Modal -->
+<!-- App Update Modal -->
 <div class="modal-overlay" id="updateOverlay" hidden>
   <div class="modal modal--md update-modal" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
-    <button class="modal__close" id="updateClose" type="button" aria-label="Close">&times;</button>
+    <button class="modal__close" id="updateClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
     <div class="update-modal__header">
       <span class="update-badge" id="updateBadge">v1.1.0</span>
-      <p class="eyebrow eyebrow--modal">New Release Available</p>
-      <h2 id="updateTitle" class="modal__title">🚀 Update Selected Work</h2>
+      <p class="eyebrow eyebrow--modal">New edition</p>
+      <h2 id="updateTitle" class="modal__title">A fresh build is ready</h2>
     </div>
-    
+
     <div class="update-modal__body">
-      <p class="update-desc" id="updateDesc">A new version of Selected Work is ready to install!</p>
+      <p class="update-desc" id="updateDesc">A new version of Selected Work is ready to install.</p>
 
       <div class="update-notes-box">
-        <h4 class="update-notes-title">✨ What's New:</h4>
+        <h4 class="update-notes-title">What changed</h4>
         <ul class="update-notes-list" id="updateNotesList">
           <li>Seamless in-app updates without deleting the app</li>
           <li>Performance and security improvements</li>
@@ -343,90 +451,98 @@
       </div>
 
       <div class="update-notice">
-        <svg class="update-notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span><strong>No need to delete the app!</strong> Tapping <em>Update Now</em> installs the new build directly over your current app with all settings preserved.</span>
+        <svg class="update-notice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.4"/></svg>
+        <span><strong>No need to delete the app.</strong> The new build installs directly over the current one, preserving your settings.</span>
       </div>
     </div>
 
     <div class="modal__footer update-modal__actions">
-      <button class="btn btn--ghost" id="updateLaterBtn" type="button">Remind Me Later</button>
-      <a class="btn btn--primary update-btn" id="updateNowBtn" href="#" target="_blank" rel="noopener">⚡ Update Now</a>
+      <button class="btn btn--ghost" id="updateLaterBtn" type="button">Later</button>
+      <a class="btn btn--primary update-btn" id="updateNowBtn" href="#" target="_blank" rel="noopener">Update now</a>
     </div>
   </div>
 </div>
 
-<!-- Long-Press Native Context Menu -->
+<!-- Long-Press Context Menu -->
 <div class="context-menu-overlay" id="contextMenuOverlay" hidden>
-  <div class="context-menu" id="contextMenu" role="menu">
+  <div class="context-menu" id="contextMenu" role="menu" aria-label="Project actions">
     <div class="context-menu__header">
-      <span class="context-menu__title" id="ctxProjectTitle">Project Actions</span>
+      <span class="context-menu__handle" aria-hidden="true"></span>
+      <span class="context-menu__title" id="ctxProjectTitle">Project actions</span>
     </div>
-    <button type="button" class="context-menu__item" id="ctxViewDetails">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-      <span>View Details</span>
+    <button type="button" class="context-menu__item" id="ctxViewDetails" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>View details</span>
     </button>
-    <button type="button" class="context-menu__item" id="ctxOpenUrl">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      <span>Open Link</span>
+    <button type="button" class="context-menu__item" id="ctxOpenUrl" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+      <span>Open project</span>
     </button>
-    <button type="button" class="context-menu__item" id="ctxCopyUrl">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      <span>Copy Link</span>
+    <button type="button" class="context-menu__item" id="ctxCopyUrl" role="menuitem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span>Copy link</span>
     </button>
-    <button type="button" class="context-menu__item ctx-admin-only" id="ctxEditProject" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      <span>Edit Project</span>
+    <button type="button" class="context-menu__item ctx-admin-only" id="ctxEditProject" role="menuitem" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+      <span>Edit entry</span>
     </button>
-    <button type="button" class="context-menu__item ctx-admin-only ctx-item--danger" id="ctxDeleteProject" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      <span>Move to Trash</span>
+    <button type="button" class="context-menu__item ctx-admin-only ctx-item--danger" id="ctxDeleteProject" role="menuitem" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6 7l1 13h10l1-13"/><path d="M10 11v5M14 11v5"/></svg>
+      <span>Move to trash</span>
     </button>
     <button type="button" class="context-menu__item context-menu__item--cancel" id="ctxCancel">Cancel</button>
   </div>
 </div>
 
-<!-- Project Detail Slide Stack View Overlay -->
+<!-- Project Detail Sheet -->
 <div class="modal-overlay modal-overlay--stack" id="cardDetailOverlay" hidden>
   <div class="modal modal--stack" role="dialog" aria-modal="true" aria-labelledby="cardDetailTitle">
-    <button class="modal__close" id="cardDetailClose" type="button" aria-label="Close">&times;</button>
-    <div class="card-detail-header">
-      <span class="chip chip--sm" id="detailCategory">Web App</span>
-      <h2 id="cardDetailTitle" class="modal__title">Project Details</h2>
-    </div>
-    <div class="card-detail-body">
-      <p class="card-detail-desc" id="detailDesc"></p>
-      <div class="card-detail-actions">
-        <a id="detailUrlBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--primary">
-          <span>Launch Project 🚀</span>
-        </a>
-        <button type="button" class="btn btn--ghost" id="detailCopyBtn">Copy Link 🔗</button>
-      </div>
+    <button class="modal__close" id="cardDetailClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <p class="eyebrow eyebrow--modal">Archive entry</p>
+    <h2 id="cardDetailTitle" class="modal__title">Project details</h2>
+    <p class="card-detail-desc" id="detailDesc"></p>
+    <dl class="detail-meta">
+      <div><dt>Discipline</dt><dd id="detailCategory">—</dd></div>
+      <div><dt>Added</dt><dd id="detailDate">—</dd></div>
+      <div><dt>Visits</dt><dd id="detailClicks">—</dd></div>
+    </dl>
+    <div class="card-detail-actions">
+      <a id="detailUrlBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--primary">
+        <span>Visit project</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      </a>
+      <button type="button" class="btn btn--ghost" id="detailCopyBtn" aria-label="Copy link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span>Copy link</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Floating Frosted Bottom Navigation Dock (Mobile App & Mobile Web) -->
-<nav class="mobile-nav-dock" id="mobileNavDock" aria-label="Mobile Navigation">
+<!-- Floating bottom navigation (mobile) -->
+<nav class="mobile-nav-dock" id="mobileNavDock" aria-label="Mobile navigation">
   <div class="mobile-nav-dock__inner">
-    <button class="nav-tab is-active" id="navTabApps" data-tab="apps" type="button" aria-label="All Projects">
-      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      <span class="nav-tab__label">Apps</span>
-      <span class="nav-indicator"></span>
+    <button class="nav-tab is-active" id="navTabApps" data-tab="apps" type="button" aria-label="All projects">
+      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg>
+      <span class="nav-tab__label">Index</span>
+      <span class="nav-indicator" aria-hidden="true"></span>
     </button>
     <button class="nav-tab" id="navTabFavs" data-tab="favs" type="button" aria-label="Favorites">
-      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <span class="nav-tab__label">Favs</span>
-      <span class="nav-indicator"></span>
+      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.7l5.9-.8L12 3.5Z"/></svg>
+      <span class="nav-tab__label">Saved</span>
+      <span class="nav-indicator" aria-hidden="true"></span>
     </button>
-    <button class="nav-tab" id="navTabSearch" data-tab="search" type="button" aria-label="Search Projects">
-      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <button class="nav-tab" id="navTabSearch" data-tab="search" type="button" aria-label="Search projects">
+      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.2-4.2"/></svg>
       <span class="nav-tab__label">Search</span>
-      <span class="nav-indicator"></span>
+      <span class="nav-indicator" aria-hidden="true"></span>
     </button>
-    <button class="nav-tab" id="navTabVault" data-tab="vault" type="button" aria-label="Admin Vault">
-      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span class="nav-tab__label">Vault</span>
-      <span class="nav-indicator"></span>
+    <button class="nav-tab" id="navTabVault" data-tab="vault" type="button" aria-label="Admin console">
+      <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="m7 9.5 3 2.5-3 2.5M13 15h4"/></svg>
+      <span class="nav-tab__label">Console</span>
+      <span class="nav-indicator" aria-hidden="true"></span>
     </button>
   </div>
 </nav>
