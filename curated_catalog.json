@@ -397,6 +397,14 @@
       "description": "A storefront demo for an Algerian sports boutique. Footwear, apparel and accessories across three languages, with category browsing and a checkout flow."
     },
     {
+      "id": "e0e80920-e177-4ebb-b169-73c54e9f0ce4",
+      "title": "SONORA S1",
+      "url": "https://sonora-s1.pages.dev",
+      "category": "Portfolios & Demos",
+      "hidden": 0,
+      "description": "Single-product mobile-first COD storefront for SONORA S1 ANC headphones. Trilingual French, Arabic RTL and English gate, 58-wilaya shipping tariffs, GPS pin and pre-filled WhatsApp ordering."
+    },
+    {
       "id": "448cf53a-5636-4b39-abaf-0ae85f8e2f23",
       "title": "Rebuild Training",
       "url": "https://workout-routine-atmr.netlify.app",
